@@ -57,6 +57,7 @@ Migration targets. Use exactly these model names and folders:
      (`line_gross_amount`, `line_discount_amount`, `line_net_amount`), `usd_rate`, the per-line rounded USD
      amounts (`line_gross_usd`, `line_discount_usd`, `line_net_usd`) and boolean flags `is_valid_order`,
      `is_test_customer`, `has_known_product`.
+   - `is_valid_order` means `order_status` is `COMPLETED`, `SHIPPED`, or `RETURNED`. Workflows with a different status rule filter `order_status` in the mart.
    - `int_returns__usd`: one row per return, with `refund_usd` at the order-month rate and the same flags.
    - Marts aggregate from these. **Marts never join `fx_rates` or re-derive status/test-account logic.**
    - **Filters live in the mart, never in a shared model.** The legacy workflows filter differently
