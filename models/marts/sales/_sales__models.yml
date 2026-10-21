@@ -38,3 +38,44 @@ models:
         description: net_sales_usd - cogs_usd.
       - name: gross_margin_pct
         description: gross_margin_usd / net_sales_usd, 4 dp (0 when net is 0).
+
+  - name: fct_product_returns
+    description: >
+      Product-level return metrics. Migrated from Talend job J_Product_Returns_Analysis
+      (target ANALYTICS.LEGACY.PRODUCT_RETURNS_SUMMARY).
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_product_returns_summary')
+    columns:
+      - name: product_id
+        description: Primary key.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_shop__products')
+                field: product_id
+      - name: sku
+        description: Product SKU.
+      - name: product_name
+        description: Product name.
+      - name: category
+        description: Product category.
+      - name: units_sold
+        description: Units sold on valid, non-test orders.
+      - name: units_returned
+        description: Returned units, capped at sold quantity per line.
+      - name: return_rate
+        description: units_returned / units_sold, 4 dp.
+      - name: refund_amount_usd
+        description: Refunds in USD at the order-month rate (not capped).
+      - name: top_return_reason
+        description: Reason with the most returned units (ties -> lowest reason code); NONE when no returns.
+      - name: return_flag
+        description: HIGH (>= 10 sold and rate >= 15%), WATCH (rate >= 8%), NORMAL.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['HIGH', 'WATCH', 'NORMAL']
