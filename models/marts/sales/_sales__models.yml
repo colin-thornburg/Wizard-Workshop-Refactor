@@ -1,0 +1,40 @@
+models:
+  - name: fct_daily_sales
+    description: >
+      Daily sales by channel group and product category, USD. Excludes test accounts and zero-qty lines.
+      Migrated from Informatica mapping m_LOAD_DAILY_SALES_SUMMARY (target ANALYTICS.LEGACY.DAILY_SALES_SUMMARY).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['sales_date', 'channel_group', 'product_category']
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_daily_sales_summary')
+    columns:
+      - name: sales_date
+        description: Order date.
+        data_tests: [not_null]
+      - name: channel_group
+        description: ONLINE (web, app), RETAIL (store), MARKETPLACE, OTHER.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['ONLINE', 'RETAIL', 'MARKETPLACE', 'OTHER']
+      - name: product_category
+        description: Product category; UNKNOWN when the product is missing from the catalog.
+      - name: order_line_count
+        description: Number of order lines.
+      - name: units_sold
+        description: Sum of quantity.
+      - name: gross_sales_usd
+        description: Sum of per-line gross USD.
+      - name: discount_usd
+        description: Sum of per-line discount USD.
+      - name: net_sales_usd
+        description: Sum of per-line net USD.
+      - name: cogs_usd
+        description: quantity x unit cost (0 for unknown products).
+      - name: gross_margin_usd
+        description: net_sales_usd - cogs_usd.
+      - name: gross_margin_pct
+        description: gross_margin_usd / net_sales_usd, 4 dp (0 when net is 0).
