@@ -1,0 +1,92 @@
+models:
+  - name: stg_shop__customers
+    description: One row per customer. Text cleaned (trim / case); test-account flag as boolean.
+    columns:
+      - name: customer_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: customer_name
+        description: Trimmed first + last name.
+      - name: email
+        description: Lower-cased, trimmed email.
+      - name: state
+        description: Upper-cased US state code.
+      - name: loyalty_tier
+        description: Upper-cased loyalty tier; NONE when missing.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'NONE']
+      - name: is_test_account
+        description: True for QA / test accounts.
+
+  - name: stg_shop__products
+    description: One row per product.
+    columns:
+      - name: product_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: unit_cost_usd
+        description: Unit cost in USD.
+
+  - name: stg_shop__orders
+    description: One row per order. Status, channel and currency normalized to upper case.
+    columns:
+      - name: order_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: order_status
+        description: Upper-cased order status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['COMPLETED', 'SHIPPED', 'RETURNED', 'CANCELLED', 'PENDING']
+      - name: currency_code
+        description: ISO currency of all order amounts.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['USD', 'CAD', 'EUR']
+
+  - name: stg_shop__order_lines
+    description: One row per order line. Amounts in order currency.
+    columns:
+      - name: order_line_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: Parent order.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_shop__orders')
+                field: order_id
+
+  - name: stg_shop__payments
+    description: One row per payment attempt.
+    columns:
+      - name: payment_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: payment_status
+        description: Upper-cased payment status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['CAPTURED', 'FAILED', 'REFUNDED']
+
+  - name: stg_shop__returns
+    description: One row per return event.
+    columns:
+      - name: return_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: reason_code
+        description: Upper-cased, trimmed reason code.
+
+  - name: stg_shop__fx_rates
+    description: One row per currency per month. USD has no rows (rate = 1).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['currency_code', 'rate_month']

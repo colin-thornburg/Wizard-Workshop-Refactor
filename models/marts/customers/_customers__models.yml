@@ -1,0 +1,44 @@
+models:
+  - name: dim_customer_ltv
+    description: >
+      Customer lifetime value and CRM segment. One row per non-test customer.
+      Migrated from stored procedure SP_LOAD_CUSTOMER_LTV (target ANALYTICS.LEGACY.CUSTOMER_LTV).
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_customer_ltv')
+    columns:
+      - name: customer_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: customer_name
+        description: First + last name.
+      - name: email
+        description: Lower-cased email.
+      - name: state
+        description: US state code.
+      - name: loyalty_tier
+        description: Loyalty tier (NONE when missing).
+      - name: first_order_date
+        description: First valid order date.
+      - name: last_order_date
+        description: Most recent valid order date.
+      - name: total_orders
+        description: Count of valid orders (COMPLETED, SHIPPED, RETURNED).
+      - name: product_revenue_usd
+        description: Sum of line net USD (excludes shipping).
+      - name: refunds_usd
+        description: Refunds in USD at the order-month rate.
+      - name: net_revenue_usd
+        description: product_revenue_usd - refunds_usd.
+      - name: avg_order_value_usd
+        description: product_revenue_usd / total_orders (0 when no orders).
+      - name: days_since_last_order
+        description: Days between last order and the as_of_date var.
+      - name: customer_segment
+        description: CRM segment.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['VIP', 'PROSPECT', 'AT_RISK', 'HIGH_VALUE', 'MID_VALUE', 'LOW_VALUE']

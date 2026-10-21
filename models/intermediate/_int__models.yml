@@ -1,0 +1,20 @@
+models:
+  - name: int_order_lines__usd
+    description: Order lines with local + USD money math and order eligibility flags. Shared by all marts.
+    columns:
+      - name: order_line_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: line_net_usd
+        description: Line net of discount, converted at the order-month FX rate, rounded to 2 dp.
+      - name: is_valid_order
+        description: Order status is COMPLETED, SHIPPED or RETURNED.
+      - name: is_test_customer
+        description: Order belongs to a QA / test account.
+
+  - name: int_returns__usd
+    description: Return events with refund converted to USD at the order-month rate.
+    columns:
+      - name: return_id
+        description: Primary key.
+        data_tests: [unique, not_null]
