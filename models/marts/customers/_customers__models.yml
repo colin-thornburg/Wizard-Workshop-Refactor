@@ -1,0 +1,59 @@
+models:
+  - name: dim_customer_ltv
+    description: >
+      One row per non-test customer with lifetime product revenue, refunds, recency, and CRM segment
+      as of var('as_of_date'). Preserves legacy behavior: missing FX defaults to 1, refunds use the
+      order-month rate without a return-date cutoff, average order value excludes refunds, and segment
+      precedence is VIP over AT_RISK over the base value segment.
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_customer_ltv')
+            exclude_columns: ['etl_load_ts']
+    columns:
+      - name: customer_id
+        description: Unique identifier for the eligible customer.
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_name
+        description: Trimmed first and last name joined with a single space.
+      - name: email
+        description: Trimmed, lowercased customer email address.
+      - name: state
+        description: Trimmed, uppercased customer state code.
+      - name: loyalty_tier
+        description: Normalized loyalty tier, defaulting blank or null values to NONE.
+      - name: first_order_date
+        description: Earliest valid order date on or before the configured as-of date.
+      - name: last_order_date
+        description: Latest valid order date on or before the configured as-of date.
+      - name: total_orders
+        description: Distinct count of completed, shipped, or returned orders through the as-of date.
+        data_tests:
+          - not_null
+      - name: product_revenue_usd
+        description: Sum of line-level net product revenue converted and rounded to USD; shipping excluded.
+        data_tests:
+          - not_null
+      - name: refunds_usd
+        description: Sum of per-return refunds converted at the original order-month rate and rounded to USD.
+        data_tests:
+          - not_null
+      - name: net_revenue_usd
+        description: Product revenue in USD less refunds in USD.
+        data_tests:
+          - not_null
+      - name: avg_order_value_usd
+        description: Product revenue before refunds divided by total orders, rounded to two decimals.
+        data_tests:
+          - not_null
+      - name: days_since_last_order
+        description: Days from the latest valid order to the configured as-of date; null for prospects.
+      - name: customer_segment
+        description: CRM segment with precedence VIP over AT_RISK over HIGH_VALUE, MID_VALUE, LOW_VALUE, and PROSPECT.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['VIP', 'AT_RISK', 'HIGH_VALUE', 'MID_VALUE', 'LOW_VALUE', 'PROSPECT']

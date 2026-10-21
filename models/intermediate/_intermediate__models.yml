@@ -1,0 +1,11 @@
+models:
+  - name: int_customer_ltv__rollup
+    description: >
+      Customer-grain rollup reproducing the stored procedure's eligible-customer filter, valid-order
+      scope, per-line USD rounding, and order-month refund conversion. Missing FX rates intentionally
+      default to 1, and returns intentionally have no return-date cutoff for legacy parity.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
