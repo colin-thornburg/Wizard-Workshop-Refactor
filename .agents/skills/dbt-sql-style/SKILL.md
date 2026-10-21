@@ -68,7 +68,11 @@ select * from final
 ## Layer rules
 
 - **Staging:** `select` from exactly one `source()`. Rename, cast, `trim`/`upper`/`lower`, `nullif(x, '')`.
-  No joins, no filters, no aggregations.
+  No joins, no filters, no aggregations. Staging does **all** the cleaning, so downstream models never
+  re-`trim` or re-`upper` a column:
+  - flags become real booleans: `coalesce(upper(trim(is_test_account)), 'N') = 'Y' as is_test_account`
+  - codes and statuses: `upper(trim(x))`; emails `lower(trim(x))`; blank strings: `nullif(trim(x), '')`
+  - business defaults stay out of staging (for example `coalesce(loyalty_tier, 'NONE')` belongs downstream)
 - **Intermediate:** joins and reusable business logic. Materialized as views.
 - **Marts:** final business grain. Materialized as tables. `select *` only appears as `select * from final`
   and in import CTEs.
