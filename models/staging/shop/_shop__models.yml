@@ -7,6 +7,14 @@ models:
           - unique
           - not_null
 
+  - name: stg_shop__products
+    description: Product catalog with source category and decimal price and cost values preserved.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+
   - name: stg_shop__orders
     description: Cleaned order headers with normalized status and currency values.
     columns:

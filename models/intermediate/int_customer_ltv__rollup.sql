@@ -18,9 +18,9 @@ orders as (
 
 ),
 
-order_lines as (
+order_lines_usd as (
 
-    select * from {{ ref('stg_shop__order_lines') }}
+    select * from {{ ref('int_order_lines__usd') }}
 
 ),
 
@@ -30,20 +30,12 @@ returns as (
 
 ),
 
-fx_rates as (
-
-    select * from {{ ref('stg_shop__fx_rates') }}
-
-),
-
 valid_orders as (
 
     select
         orders.order_id,
         orders.customer_id,
-        orders.order_date,
-        orders.currency_code,
-        date_trunc('month', orders.order_date) as rate_month
+        orders.order_date
 
     from orders
     inner join customers
@@ -54,32 +46,15 @@ valid_orders as (
 line_revenue as (
 
     select
-        order_lines.order_line_id,
+        order_lines_usd.order_line_id,
         valid_orders.order_id,
         valid_orders.customer_id,
-        coalesce(fx_rates.usd_per_unit, 1) as usd_rate,
-        (order_lines.quantity * order_lines.unit_price)
-            - round(
-                order_lines.quantity * order_lines.unit_price * order_lines.discount_pct,
-                2
-            ) as line_net_local,
-        round(
-            (
-                (order_lines.quantity * order_lines.unit_price)
-                - round(
-                    order_lines.quantity * order_lines.unit_price * order_lines.discount_pct,
-                    2
-                )
-            ) * coalesce(fx_rates.usd_per_unit, 1),
-            2
-        ) as line_net_usd
+        order_lines_usd.usd_rate,
+        order_lines_usd.line_net_usd
 
-    from order_lines
+    from order_lines_usd
     inner join valid_orders
-        on order_lines.order_id = valid_orders.order_id
-    left join fx_rates
-        on valid_orders.currency_code = fx_rates.currency_code
-        and valid_orders.rate_month = fx_rates.rate_month
+        on order_lines_usd.order_id = valid_orders.order_id
 
 ),
 
