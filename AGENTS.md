@@ -50,8 +50,10 @@ Migration targets. Use exactly these model names and folders:
    same column order as the legacy target. Drop legacy audit columns (`ETL_LOAD_TS`, `ETL_BATCH_ID`).
    If legacy logic looks wrong, keep it and flag it in the model's YAML description. Don't fix it silently.
 5. **Money:** never cast to float. Keep `number`/`decimal` math and round where the legacy code rounds.
-6. **No hard-coded dates or schemas.** Use `var('as_of_date')` instead of `current_date`. Use `ref()`/`source()`.
-7. **Never edit** `legacy/`, `seeds/`, `tests/generic/legacy_parity.sql` or `macros/parity/` to make a test pass.
+6. **Shared order-line money math:** discount, FX conversion and USD rounding live in one shared
+   intermediate model at order-line grain. Customer, product and daily marts aggregate from it.
+7. **No hard-coded dates or schemas.** Use `var('as_of_date')` instead of `current_date`. Use `ref()`/`source()`.
+8. **Never edit** `legacy/`, `seeds/`, `tests/generic/legacy_parity.sql` or `macros/parity/` to make a test pass.
 
 ## Definition of done for a migrated mart
 
