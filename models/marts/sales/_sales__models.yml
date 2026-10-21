@@ -45,3 +45,59 @@ models:
         description: Net sales in USD less COGS in USD at the daily reporting grain.
       - name: gross_margin_pct
         description: Gross margin divided by net sales, rounded to four decimals and set to zero when net sales are zero.
+
+
+
+  - name: fct_product_returns
+    description: >
+      Product returns summary migrated from Talend at one row per product sold on an eligible order.
+      Preserves legacy behavior: completed, shipped, and returned orders are included; test-account
+      customers and deleted products are excluded; refunds use order-month FX with missing rates
+      defaulting to 1 and per-return USD rounding; returned units are capped at sold units per line
+      while refund dollars remain uncapped; and top reason uses uncapped returned units with an
+      alphabetical reason-code tie-break.
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_product_returns_summary')
+            exclude_columns: ['etl_load_ts']
+    columns:
+      - name: product_id
+        description: Product identifier and primary key of the summary.
+        data_tests:
+          - unique
+          - not_null
+      - name: sku
+        description: Product stock-keeping unit from the inner product lookup.
+        data_tests:
+          - not_null
+      - name: product_name
+        description: Product display name from the inner product lookup.
+        data_tests:
+          - not_null
+      - name: category
+        description: Product category from the inner product lookup.
+        data_tests:
+          - not_null
+      - name: units_sold
+        description: Units sold across eligible order lines for the product.
+      - name: units_returned
+        description: Returned units capped at the sold quantity on each order line before product aggregation.
+      - name: return_rate
+        description: Capped units returned divided by units sold, rounded to four decimals; zero when no units were sold.
+      - name: refund_amount_usd
+        description: Uncapped refund amount converted using order-month FX, rounded per return before summing and rounded to two decimals at product grain.
+      - name: top_return_reason
+        description: Label for the reason with the most uncapped returned units; alphabetical reason code breaks ties and products without returns use NONE.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NONE', 'Damaged', 'Wrong Size', 'Not As Described', 'Changed Mind', 'Other']
+      - name: return_flag
+        description: HIGH when at least 10 units were sold and return rate is at least 15%; otherwise WATCH at 8% or above, else NORMAL.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['HIGH', 'WATCH', 'NORMAL']
