@@ -91,11 +91,7 @@ normalized as (
             else 'OTHER'
         end as channel_group,
         coalesce(joined.category, 'UNKNOWN') as product_category,
-        case
-            when upper(trim(joined.is_test_account)) = 'Y' then 1
-            else 0
-        end as is_test,
-        joined.order_status <> 'CANCELLED' as is_valid_order,
+        joined.order_status in ('COMPLETED', 'SHIPPED', 'RETURNED') as is_valid_order,
         coalesce(upper(trim(joined.is_test_account)), 'N') = 'Y' as is_test_customer,
         joined.matched_product_id is not null as has_known_product,
         joined.quantity * joined.unit_price as line_gross_amount,
@@ -124,7 +120,6 @@ calculated as (
         normalized.usd_rate,
         normalized.channel_group,
         normalized.product_category,
-        normalized.is_test,
         normalized.is_valid_order,
         normalized.is_test_customer,
         normalized.has_known_product,
@@ -151,7 +146,6 @@ final as (
         calculated.unit_price,
         calculated.discount_pct,
         calculated.product_category,
-        calculated.is_test,
         calculated.usd_rate,
         round(calculated.line_gross_amount * calculated.usd_rate, 2) as line_gross_usd,
         round(calculated.line_discount_amount * calculated.usd_rate, 2) as line_discount_usd,

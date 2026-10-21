@@ -6,7 +6,7 @@ with
 order_lines as (
 
     select * from {{ ref('int_order_lines__usd') }}
-    where is_valid_order
+    where order_status <> 'CANCELLED'
 
 ),
 

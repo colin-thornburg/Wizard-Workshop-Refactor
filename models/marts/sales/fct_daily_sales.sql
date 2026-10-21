@@ -7,7 +7,7 @@ order_lines_usd as (
 
     select * from {{ ref('int_order_lines__usd') }}
     where order_status in ('COMPLETED', 'SHIPPED', 'RETURNED')
-        and is_test = 0
+        and not is_test_customer
         and quantity > 0
 
 ),
