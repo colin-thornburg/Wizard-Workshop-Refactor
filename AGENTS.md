@@ -44,14 +44,25 @@ Migration targets. Use exactly these model names and folders:
 
 1. **Layering:** sources → staging → intermediate → marts. Marts never read sources. Staging never joins.
 2. **One staging model per source table.** Before creating one, check `models/staging/shop/`. Reuse; never duplicate.
-3. **Reuse intermediate models only when the rules match exactly**: same filters, join types and defaults.
-   The four legacy workflows do not all filter the same way.
+3. **Always reuse the shared models in rule 6.** They carry no filters. Reuse any *other* intermediate model
+   only when the rules match exactly: same filters, join types and defaults. The four legacy workflows do not
+   all filter the same way.
 4. **Preserve legacy behavior, including its quirks.** Same grain, same column names (lower snake_case),
    same column order as the legacy target. Drop legacy audit columns (`ETL_LOAD_TS`, `ETL_BATCH_ID`).
    If legacy logic looks wrong, keep it and flag it in the model's YAML description. Don't fix it silently.
 5. **Money:** never cast to float. Keep `number`/`decimal` math and round where the legacy code rounds.
-6. **Shared order-line money math:** discount, FX conversion and USD rounding live in one shared
-   intermediate model at order-line grain. Customer, product and daily marts aggregate from it.
+6. **Shared intermediate models: build once, reuse everywhere.**
+   - `int_order_lines__usd`: one row per order line, **all lines, no filters**. It carries at least the ids,
+     `order_date`, `order_status`, `channel`, `currency_code`, `quantity`, the local amounts
+     (`line_gross_amount`, `line_discount_amount`, `line_net_amount`), `usd_rate`, the per-line rounded USD
+     amounts (`line_gross_usd`, `line_discount_usd`, `line_net_usd`) and boolean flags `is_valid_order`,
+     `is_test_customer`, `has_known_product`.
+   - `int_returns__usd`: one row per return, with `refund_usd` at the order-month rate and the same flags.
+   - Marts aggregate from these. **Marts never join `fx_rates` or re-derive status/test-account logic.**
+   - **Filters live in the mart, never in a shared model.** The legacy workflows filter differently
+     (statuses, test accounts, zero quantities, unknown products). Shared models carry flags; each mart picks.
+   - If the model you need is missing, create it. If it lacks a column you need, add the column.
+     Then run `dbt build --select <shared model>+` so every existing mart re-proves parity.
 7. **No hard-coded dates or schemas.** Use `var('as_of_date')` instead of `current_date`. Use `ref()`/`source()`.
 8. **Never edit** `legacy/`, `seeds/`, `tests/generic/legacy_parity.sql` or `macros/parity/` to make a test pass.
 
@@ -59,7 +70,9 @@ Migration targets. Use exactly these model names and folders:
 
 - [ ] SQL follows `dbt-sql-style`; YAML follows `dbt-testing-standards`.
 - [ ] Mart YAML has a `legacy_parity` test pointing at its snapshot seed.
-- [ ] `dbt build --select +<mart>` passes, including `legacy_parity`.
+- [ ] Reuse check: the summary names the existing staging and intermediate models reused, and why anything new was needed.
+- [ ] `dbt build --select +<mart>+` passes, including `legacy_parity`.
+- [ ] `dbt run-operation parity_report` is run, and its result is included in the summary.
 - [ ] Short summary to the user: legacy step → dbt model mapping, plus any quirks preserved.
 
 ## Commands
