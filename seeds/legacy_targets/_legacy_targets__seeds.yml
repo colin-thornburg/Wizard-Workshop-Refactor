@@ -1,0 +1,80 @@
+seeds:
+  - name: legacy_customer_ltv
+    description: >
+      Snapshot of ANALYTICS.LEGACY.CUSTOMER_LTV as produced by stored procedure
+      SP_LOAD_CUSTOMER_LTV (as-of 2026-09-30). Golden data for parity testing. Do not edit.
+    config:
+      column_types:
+        customer_id: integer
+        customer_name: varchar
+        email: varchar
+        state: varchar
+        loyalty_tier: varchar
+        first_order_date: date
+        last_order_date: date
+        total_orders: integer
+        product_revenue_usd: decimal(18,2)
+        refunds_usd: decimal(18,2)
+        net_revenue_usd: decimal(18,2)
+        avg_order_value_usd: decimal(18,2)
+        days_since_last_order: integer
+        customer_segment: varchar
+        etl_load_ts: timestamp
+
+  - name: legacy_daily_sales_summary
+    description: >
+      Snapshot of ANALYTICS.LEGACY.DAILY_SALES_SUMMARY as produced by Informatica mapping
+      m_LOAD_DAILY_SALES_SUMMARY. Golden data for parity testing. Do not edit.
+    config:
+      column_types:
+        sales_date: date
+        channel_group: varchar
+        product_category: varchar
+        order_line_count: integer
+        units_sold: integer
+        gross_sales_usd: decimal(18,2)
+        discount_usd: decimal(18,2)
+        net_sales_usd: decimal(18,2)
+        cogs_usd: decimal(18,2)
+        gross_margin_usd: decimal(18,2)
+        gross_margin_pct: decimal(10,4)
+        etl_load_ts: timestamp
+
+  - name: legacy_product_returns_summary
+    description: >
+      Snapshot of ANALYTICS.LEGACY.PRODUCT_RETURNS_SUMMARY as produced by Talend job
+      J_Product_Returns_Analysis. Golden data for parity testing. Do not edit.
+    config:
+      column_types:
+        product_id: integer
+        sku: varchar
+        product_name: varchar
+        category: varchar
+        units_sold: integer
+        units_returned: integer
+        return_rate: decimal(10,4)
+        refund_amount_usd: decimal(18,2)
+        top_return_reason: varchar
+        return_flag: varchar
+        etl_load_ts: timestamp
+
+  - name: legacy_payment_reconciliation
+    description: >
+      Snapshot of ANALYTICS.LEGACY.PAYMENT_RECONCILIATION as produced by Alteryx workflow
+      Payment_Reconciliation.yxmd. Golden data for parity testing. Do not edit.
+    config:
+      column_types:
+        order_id: integer
+        customer_id: integer
+        order_date: date
+        order_status: varchar
+        currency_code: varchar
+        expected_amount: decimal(18,2)
+        captured_amount: decimal(18,2)
+        variance_amount: decimal(18,2)
+        captured_payment_count: integer
+        failed_payment_count: integer
+        last_captured_date: date
+        days_to_payment: integer
+        reconciliation_status: varchar
+        etl_load_ts: timestamp

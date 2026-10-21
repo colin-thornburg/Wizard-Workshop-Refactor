@@ -1,0 +1,41 @@
+product_id,sku,product_name,category,subcategory,list_price,unit_cost,is_active
+101,SO-FOO-0101,Ridgeline Mid GTX Boot,Footwear,Hiking Boots,189.00,82.40,true
+102,SO-FOO-0102,Summit Pro Leather Boot,Footwear,Hiking Boots,245.00,108.75,true
+103,SO-FOO-0103,Scree Dash Trail Runner,Footwear,Trail Runners,139.00,57.10,true
+104,SO-FOO-0104,Talus Lite Runner,Footwear,Trail Runners,119.95,49.30,true
+105,SO-FOO-0105,Canyon Strap Sandal,Footwear,Sandals,64.50,22.15,true
+106,SO-FOO-0106,Basecamp Slip-On,Footwear,Camp Shoes,54.00,19.80,false
+107,SO-APP-0107,Stormfront 3L Shell,Apparel,Jackets,329.00,141.60,true
+108,SO-APP-0108,Alpenglow Down Hoodie,Apparel,Jackets,279.00,118.20,true
+109,SO-APP-0109,Switchback Grid Fleece,Apparel,Fleece,99.00,36.45,true
+110,SO-APP-0110,Merino 200 Crew,Apparel,Base Layers,84.95,31.70,true
+111,SO-APP-0111,Merino 150 Tee,Apparel,Base Layers,64.95,23.85,true
+112,SO-APP-0112,Traverse Softshell Pant,Apparel,Pants,129.00,47.95,true
+113,SO-APP-0113,Boulder Field Short,Apparel,Pants,59.00,20.40,true
+114,SO-APP-0114,Trailhead Trucker Cap,Apparel,Headwear,29.95,8.60,true
+115,SO-CAM-0115,Highline 2P Tent,Camping,Tents,449.00,196.30,true
+116,SO-CAM-0116,Meadow 4P Family Tent,Camping,Tents,389.00,171.25,true
+117,SO-CAM-0117,Ember 20F Down Bag,Camping,Sleeping Bags,299.00,127.80,true
+118,SO-CAM-0118,Drift 40F Synthetic Bag,Camping,Sleeping Bags,149.00,58.35,true
+119,SO-CAM-0119,Loft Air Pad,Camping,Sleeping Pads,169.00,66.90,true
+120,SO-CAM-0120,Firebox Stove Kit,Camping,Cooking,119.00,44.70,true
+121,SO-CAM-0121,Titanium Pot 900ml,Camping,Cooking,54.95,18.25,false
+122,SO-CLI-0122,Crux Sport Harness,Climbing,Harnesses,74.95,28.40,true
+123,SO-CLI-0123,Dyna 9.8mm 60m Rope,Climbing,Ropes,219.00,94.10,true
+124,SO-CLI-0124,Lockdown Screwgate (4pk),Climbing,Carabiners,49.95,16.80,true
+125,SO-CLI-0125,Edge Pro Climbing Shoe,Climbing,Shoes,164.00,65.25,true
+126,SO-CLI-0126,Halo Climbing Helmet,Climbing,Helmets,89.00,33.90,true
+127,SO-WAT-0127,Current Carbon Paddle,Water Sports,Paddles,199.00,79.40,true
+128,SO-WAT-0128,Eddy Touring PFD,Water Sports,PFDs,129.95,48.75,true
+129,SO-WAT-0129,Seal Tight 20L Dry Bag,Water Sports,Dry Bags,34.95,10.20,true
+130,SO-WAT-0130,Seal Tight 35L Dry Bag,Water Sports,Dry Bags,44.95,13.65,true
+131,SO-ACC-0131,Cairn 28L Daypack,Accessories,Packs,139.00,52.80,true
+132,SO-ACC-0132,Longtrail 65L Pack,Accessories,Packs,289.00,119.35,true
+133,SO-ACC-0133,Flow 2L Reservoir,Accessories,Hydration,39.95,12.45,true
+134,SO-ACC-0134,Lumen 400 Headlamp,Accessories,Lighting,49.95,17.10,true
+135,SO-ACC-0135,Bearing Baseplate Compass,Accessories,Navigation,34.50,11.25,true
+136,SO-ACC-0136,Ascent Carbon Trekking Poles,Accessories,Poles,159.00,61.80,true
+137,SO-ACC-0137,Insulated Bottle 32oz,Accessories,Bottles,36.00,11.40,true
+138,SO-ACC-0138,Ridge Multi-Tool,Accessories,Tools,69.00,24.30,false
+139,SO-ACC-0139,Backcountry First Aid Kit,Accessories,First Aid,44.00,15.95,true
+140,SO-ACC-0140,Hip Pack 4L,Accessories,Packs,49.00,16.75,true

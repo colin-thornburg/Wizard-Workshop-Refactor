@@ -1,0 +1,80 @@
+seeds:
+  - name: customers
+    description: Raw customer master from the e-commerce platform. Dirty text values (case, whitespace) on purpose.
+    config:
+      column_types:
+        customer_id: integer
+        first_name: varchar
+        last_name: varchar
+        email: varchar
+        state: varchar
+        signup_date: date
+        loyalty_tier: varchar
+        is_test_account: varchar
+
+  - name: products
+    description: Product catalog. unit_cost is in USD.
+    config:
+      column_types:
+        product_id: integer
+        sku: varchar
+        product_name: varchar
+        category: varchar
+        subcategory: varchar
+        list_price: decimal(18,2)
+        unit_cost: decimal(18,2)
+        is_active: boolean
+
+  - name: orders
+    description: Order headers. Amounts are in the order currency.
+    config:
+      column_types:
+        order_id: integer
+        customer_id: integer
+        order_date: date
+        status: varchar
+        channel: varchar
+        currency_code: varchar
+        shipping_cost: decimal(18,2)
+        promo_code: varchar
+
+  - name: order_lines
+    description: Order line items. Amounts are in the order currency.
+    config:
+      column_types:
+        order_line_id: integer
+        order_id: integer
+        product_id: integer
+        quantity: integer
+        unit_price: decimal(18,2)
+        discount_pct: decimal(6,4)
+
+  - name: payments
+    description: Payment attempts per order (captured / failed / refunded).
+    config:
+      column_types:
+        payment_id: integer
+        order_id: integer
+        payment_method: varchar
+        payment_status: varchar
+        amount: decimal(18,2)
+        payment_date: date
+
+  - name: returns
+    description: Item returns. refund_amount is in the order currency.
+    config:
+      column_types:
+        return_id: integer
+        order_line_id: integer
+        return_date: date
+        return_qty: integer
+        reason_code: varchar
+        refund_amount: decimal(18,2)
+
+  - name: fx_rates
+    description: Monthly FX rates to USD. USD has no rows (rate = 1).
+    config:
+      column_types:
+        currency_code: varchar
+        rate_month: date
+        usd_per_unit: decimal(18,6)

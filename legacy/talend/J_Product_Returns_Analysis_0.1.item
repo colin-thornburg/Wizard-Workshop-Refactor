@@ -1,0 +1,741 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<talendfile:ProcessType xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" xmlns:TalendMapper="http://www.talend.org/mapper" xmi:version="2.0" defaultContext="PROD" jobType="Standard">
+  <context confirmationNeeded="false" name="DEV">
+    <contextParameter comment="" name="sf_account" prompt="sf_account?" promptNeeded="false" type="id_String" value="summitoutfitters-dev.us-east-1"/>
+    <contextParameter comment="" name="sf_user" prompt="sf_user?" promptNeeded="false" type="id_String" value="SVC_TALEND_ETL"/>
+    <contextParameter comment="" name="sf_password" prompt="sf_password?" promptNeeded="false" type="id_Password" value="enc:system.encryption.key.v1:Wq3m9xK1T0vR2bYd8nLc+Q=="/>
+    <contextParameter comment="" name="sf_warehouse" prompt="sf_warehouse?" promptNeeded="false" type="id_String" value="ETL_WH"/>
+    <contextParameter comment="" name="sf_role" prompt="sf_role?" promptNeeded="false" type="id_String" value="ETL_ROLE"/>
+    <contextParameter comment="" name="src_database" prompt="src_database?" promptNeeded="false" type="id_String" value="RAW"/>
+    <contextParameter comment="" name="src_schema" prompt="src_schema?" promptNeeded="false" type="id_String" value="SHOP"/>
+    <contextParameter comment="" name="tgt_database" prompt="tgt_database?" promptNeeded="false" type="id_String" value="ANALYTICS"/>
+    <contextParameter comment="" name="tgt_schema" prompt="tgt_schema?" promptNeeded="false" type="id_String" value="LEGACY"/>
+  </context>
+  <context confirmationNeeded="false" name="PROD">
+    <contextParameter comment="" name="sf_account" prompt="sf_account?" promptNeeded="false" type="id_String" value="summitoutfitters.us-east-1"/>
+    <contextParameter comment="" name="sf_user" prompt="sf_user?" promptNeeded="false" type="id_String" value="SVC_TALEND_ETL"/>
+    <contextParameter comment="" name="sf_password" prompt="sf_password?" promptNeeded="false" type="id_Password" value="enc:system.encryption.key.v1:Wq3m9xK1T0vR2bYd8nLc+Q=="/>
+    <contextParameter comment="" name="sf_warehouse" prompt="sf_warehouse?" promptNeeded="false" type="id_String" value="ETL_WH"/>
+    <contextParameter comment="" name="sf_role" prompt="sf_role?" promptNeeded="false" type="id_String" value="ETL_ROLE"/>
+    <contextParameter comment="" name="src_database" prompt="src_database?" promptNeeded="false" type="id_String" value="RAW"/>
+    <contextParameter comment="" name="src_schema" prompt="src_schema?" promptNeeded="false" type="id_String" value="SHOP"/>
+    <contextParameter comment="" name="tgt_database" prompt="tgt_database?" promptNeeded="false" type="id_String" value="ANALYTICS"/>
+    <contextParameter comment="" name="tgt_schema" prompt="tgt_schema?" promptNeeded="false" type="id_String" value="LEGACY"/>
+  </context>
+  <parameters>
+    <elementParameter field="CHECK" name="ENABLE_STATS" value="true"/>
+    <elementParameter field="CHECK" name="ON_DATABASE_FLAG" value="true"/>
+    <elementParameter field="TEXT" name="SCHEMA_DB" value="&quot;ETL_AUDIT&quot;"/>
+    <elementParameter field="TEXT" name="JOB_RUN_VM_ARGUMENTS" value=" -Xms512M -Xmx2048M"/>
+    <elementParameter field="CHECK" name="JOB_RUN_VM_ARGUMENTS_OPTION" value="true"/>
+    <elementParameter field="TEXT" name="SCREEN_OFFSET_X" value="0"/>
+    <elementParameter field="TEXT" name="SCREEN_OFFSET_Y" value="0"/>
+    <elementParameter field="TEXT" name="SCHEDULE" value="Daily 03:30 America/Denver (TAC plan PLN_NIGHTLY_ANALYTICS step 3 of 4)"/>
+    <routinesParameter id="_rtn_StringHandling" name="StringHandling"/>
+    <routinesParameter id="_rtn_TalendDate" name="TalendDate"/>
+    <routinesParameter id="_rtn_Relational" name="Relational"/>
+  </parameters>
+  <node componentName="tPrejob" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="64" posY="32">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPrejob_1"/>
+    <metadata connector="FLOW" label="tPrejob_1" name="tPrejob_1"/>
+  </node>
+  <node componentName="tSnowflakeConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="32">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="SF_ETL_CONN"/>
+    <elementParameter field="TEXT" name="ACCOUNT" value="context.sf_account"/>
+    <elementParameter field="TEXT" name="USER_ID" value="context.sf_user"/>
+    <elementParameter field="PASSWORD" name="PASSWORD" value="context.sf_password"/>
+    <elementParameter field="TEXT" name="WAREHOUSE" value="context.sf_warehouse"/>
+    <elementParameter field="TEXT" name="DB" value="context.src_database"/>
+    <elementParameter field="TEXT" name="SCHEMA" value="context.src_schema"/>
+    <elementParameter field="TEXT" name="ROLE" value="context.sf_role"/>
+    <elementParameter field="CHECK" name="AUTO_COMMIT" value="true"/>
+  </node>
+  <node componentName="tNote" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="480" posY="0">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tNote_1"/>
+    <elementParameter field="MEMO" name="TEXT" value="J_Product_Returns_Analysis&#10;Owner: Merch Analytics ETL (D. Okafor) | Created 2019-06 | Last change 2023-11&#10;Builds ANALYTICS.LEGACY.PRODUCT_RETURNS_SUMMARY (1 row per product sold on a valid order).&#10;Valid order = status COMPLETED / SHIPPED / RETURNED and customer is not a QA/test account.&#10;Refunds converted to USD at the ORDER month FX rate (not the return month). USD has no row in FX_RATES -&gt; rate 1.&#10;Truncate + reload nightly."/>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="RETURNS"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;RETURNS&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT RETURN_ID, ORDER_LINE_ID, RETURN_DATE, RETURN_QTY, REASON_CODE, REFUND_AMOUNT&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.RETURNS&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_1" name="tSnowflakeInput_1">
+      <column key="true" length="38" name="RETURN_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="RETURN_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="ORDER_LINE_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="0" name="RETURN_DATE" nullable="true" pattern="&quot;yyyy-MM-dd&quot;" precision="0" sourceType="DATE" type="id_Date" originalField="RETURN_DATE" usefulColumn="true"/>
+      <column key="false" length="10" name="RETURN_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="RETURN_QTY" usefulColumn="true"/>
+      <column key="false" length="255" name="REASON_CODE" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="18" name="REFUND_AMOUNT" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="REFUND_AMOUNT" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="320">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_2"/>
+    <elementParameter field="TEXT" name="LABEL" value="ORDER_LINES (lkp)"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;ORDER_LINES&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT ORDER_LINE_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE, DISCOUNT_PCT&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.ORDER_LINES&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_2" name="tSnowflakeInput_2">
+      <column key="true" length="38" name="ORDER_LINE_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="ORDER_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="10" name="QUANTITY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="QUANTITY" usefulColumn="true"/>
+      <column key="false" length="18" name="UNIT_PRICE" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="UNIT_PRICE" usefulColumn="true"/>
+      <column key="false" length="10" name="DISCOUNT_PCT" nullable="true" pattern="" precision="4" sourceType="NUMBER" type="id_BigDecimal" originalField="DISCOUNT_PCT" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="416">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_3"/>
+    <elementParameter field="TEXT" name="LABEL" value="ORDERS (lkp)"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;ORDERS&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, CURRENCY_CODE&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.ORDERS&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_3" name="tSnowflakeInput_3">
+      <column key="true" length="38" name="ORDER_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="CUSTOMER_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="CUSTOMER_ID" usefulColumn="true"/>
+      <column key="false" length="0" name="ORDER_DATE" nullable="true" pattern="&quot;yyyy-MM-dd&quot;" precision="0" sourceType="DATE" type="id_Date" originalField="ORDER_DATE" usefulColumn="true"/>
+      <column key="false" length="255" name="STATUS" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="STATUS" usefulColumn="true"/>
+      <column key="false" length="255" name="CURRENCY_CODE" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CURRENCY_CODE" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="512">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_4"/>
+    <elementParameter field="TEXT" name="LABEL" value="CUSTOMERS (lkp)"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;CUSTOMERS&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT CUSTOMER_ID, IS_TEST_ACCOUNT&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.CUSTOMERS&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_4" name="tSnowflakeInput_4">
+      <column key="true" length="38" name="CUSTOMER_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="CUSTOMER_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="IS_TEST_ACCOUNT" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="IS_TEST_ACCOUNT" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="608">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_5"/>
+    <elementParameter field="TEXT" name="LABEL" value="FX_RATES (lkp)"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;FX_RATES&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT UPPER(TRIM(CURRENCY_CODE)) AS CURRENCY_CODE,&#10;       TO_CHAR(RATE_MONTH, 'YYYY-MM-DD') AS RATE_MONTH_KEY,&#10;       USD_PER_UNIT&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.FX_RATES&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_5" name="tSnowflakeInput_5">
+      <column key="true" length="255" name="CURRENCY_CODE" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CURRENCY_CODE" usefulColumn="true"/>
+      <column key="true" length="255" name="RATE_MONTH_KEY" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="RATE_MONTH_KEY" usefulColumn="true"/>
+      <column key="false" length="18" name="USD_PER_UNIT" nullable="true" pattern="" precision="6" sourceType="NUMBER" type="id_BigDecimal" originalField="USD_PER_UNIT" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="320" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="MAP_RETURNS_TO_USD"/>
+    <elementParameter field="EXTERNAL" name="MAP" value=""/>
+    <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
+    <elementParameter field="DIRECTORY" name="TEMPORARY_DATA_DIRECTORY" value=""/>
+    <elementParameter field="CHECK" name="DIE_ON_ERROR" value="true"/>
+    <metadata connector="FLOW" label="out_returns" name="out_returns">
+      <column key="false" length="38" name="ORDER_LINE_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="REASON_CODE" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="RETURN_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="RETURN_QTY" usefulColumn="true"/>
+      <column key="false" length="18" name="REFUND_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="REFUND_USD" usefulColumn="true"/>
+    </metadata>
+    <nodeData xsi:type="TalendMapper:MapperData">
+      <uiProperties shellMaximized="true"/>
+      <varTables sizeState="INTERMEDIATE" name="Var" minimized="false">
+        <mapperTableEntries name="fx_rate" expression="lkp_fx_rates.USD_PER_UNIT == null ? java.math.BigDecimal.ONE : lkp_fx_rates.USD_PER_UNIT" type="id_BigDecimal" nullable="true"/>
+        <mapperTableEntries name="refund_usd" expression="row_returns.REFUND_AMOUNT.multiply(Var.fx_rate).setScale(2, java.math.RoundingMode.HALF_UP)" type="id_BigDecimal" nullable="true"/>
+        <mapperTableEntries name="reason_code" expression="row_returns.REASON_CODE == null ? null : StringHandling.UPCASE(row_returns.REASON_CODE.trim())" type="id_String" nullable="true"/>
+      </varTables>
+      <outputTables sizeState="INTERMEDIATE" name="out_returns" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="ORDER_LINE_ID" expression="row_returns.ORDER_LINE_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="PRODUCT_ID" expression="lkp_order_lines.PRODUCT_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="REASON_CODE" expression="Var.reason_code" type="id_String" nullable="true"/>
+        <mapperTableEntries name="RETURN_QTY" expression="row_returns.RETURN_QTY" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="REFUND_USD" expression="Var.refund_usd" type="id_BigDecimal" nullable="true"/>
+      </outputTables>
+      <inputTables sizeState="INTERMEDIATE" name="row_returns" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE">
+        <mapperTableEntries name="RETURN_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="ORDER_LINE_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="RETURN_DATE" type="id_Date" nullable="true"/>
+        <mapperTableEntries name="RETURN_QTY" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="REASON_CODE" type="id_String" nullable="true"/>
+        <mapperTableEntries name="REFUND_AMOUNT" type="id_BigDecimal" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_order_lines" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="true" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="ORDER_LINE_ID" type="id_Long" nullable="true" expression="row_returns.ORDER_LINE_ID" operator="="/>
+        <mapperTableEntries name="ORDER_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="PRODUCT_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="QUANTITY" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="UNIT_PRICE" type="id_BigDecimal" nullable="true"/>
+        <mapperTableEntries name="DISCOUNT_PCT" type="id_BigDecimal" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_orders" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="true" activateExpressionFilter="true" expressionFilter="java.util.Arrays.asList(&quot;COMPLETED&quot;, &quot;SHIPPED&quot;, &quot;RETURNED&quot;).contains(lkp_orders.STATUS == null ? &quot;&quot; : StringHandling.UPCASE(lkp_orders.STATUS.trim()))">
+        <mapperTableEntries name="ORDER_ID" type="id_Long" nullable="true" expression="lkp_order_lines.ORDER_ID" operator="="/>
+        <mapperTableEntries name="CUSTOMER_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="ORDER_DATE" type="id_Date" nullable="true"/>
+        <mapperTableEntries name="STATUS" type="id_String" nullable="true"/>
+        <mapperTableEntries name="CURRENCY_CODE" type="id_String" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_customers" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="true" activateExpressionFilter="true" expressionFilter="!&quot;Y&quot;.equals(lkp_customers.IS_TEST_ACCOUNT == null ? &quot;N&quot; : StringHandling.UPCASE(lkp_customers.IS_TEST_ACCOUNT.trim()))">
+        <mapperTableEntries name="CUSTOMER_ID" type="id_Long" nullable="true" expression="lkp_orders.CUSTOMER_ID" operator="="/>
+        <mapperTableEntries name="IS_TEST_ACCOUNT" type="id_String" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_fx_rates" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="false" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="CURRENCY_CODE" type="id_String" nullable="true" expression="lkp_orders.CURRENCY_CODE == null ? null : StringHandling.UPCASE(lkp_orders.CURRENCY_CODE.trim())" operator="="/>
+        <mapperTableEntries name="RATE_MONTH_KEY" type="id_String" nullable="true" expression="TalendDate.formatDate(&quot;yyyy-MM-01&quot;, lkp_orders.ORDER_DATE)" operator="="/>
+        <mapperTableEntries name="USD_PER_UNIT" type="id_BigDecimal" nullable="true"/>
+      </inputTables>
+    </nodeData>
+  </node>
+  <node componentName="tReplicate" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="544" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tReplicate_1"/>
+    <metadata connector="FLOW" label="tReplicate_1" name="tReplicate_1">
+      <column key="false" length="38" name="ORDER_LINE_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="REASON_CODE" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="RETURN_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="RETURN_QTY" usefulColumn="true"/>
+      <column key="false" length="18" name="REFUND_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="REFUND_USD" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tAggregateRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="736" posY="128">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tAggregateRow_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="AGG_BY_LINE"/>
+    <elementParameter field="TABLE" name="GROUPBYS" value="">
+      <elementValue elementRef="OUTPUT_COLUMN" value="ORDER_LINE_ID"/>
+      <elementValue elementRef="INPUT_COLUMN" value="ORDER_LINE_ID"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="PRODUCT_ID"/>
+      <elementValue elementRef="INPUT_COLUMN" value="PRODUCT_ID"/>
+    </elementParameter>
+    <elementParameter field="TABLE" name="OPERATIONS" value="">
+      <elementValue elementRef="OUTPUT_COLUMN" value="LINE_RETURN_QTY"/>
+      <elementValue elementRef="FUNCTION" value="sum"/>
+      <elementValue elementRef="INPUT_COLUMN" value="RETURN_QTY"/>
+      <elementValue elementRef="IGNORE_NULL" value="false"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="LINE_REFUND_USD"/>
+      <elementValue elementRef="FUNCTION" value="sum"/>
+      <elementValue elementRef="INPUT_COLUMN" value="REFUND_USD"/>
+      <elementValue elementRef="IGNORE_NULL" value="false"/>
+    </elementParameter>
+    <metadata connector="FLOW" label="tAggregateRow_1" name="tAggregateRow_1">
+      <column key="true" length="38" name="ORDER_LINE_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="10" name="LINE_RETURN_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="LINE_RETURN_QTY" usefulColumn="true"/>
+      <column key="false" length="18" name="LINE_REFUND_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="LINE_REFUND_USD" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tHashOutput" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="960" posY="128">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tHashOutput_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="HASH_LINE_RETURNS"/>
+    <elementParameter field="CHECK" name="LINK_WITH" value="false"/>
+    <elementParameter field="CLOSED_LIST" name="KEYS_MANAGEMENT" value="KEEP_ALL"/>
+    <elementParameter field="CHECK" name="APPEND" value="false"/>
+    <metadata connector="FLOW" label="tHashOutput_1" name="tHashOutput_1">
+      <column key="true" length="38" name="ORDER_LINE_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="10" name="LINE_RETURN_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="LINE_RETURN_QTY" usefulColumn="true"/>
+      <column key="false" length="18" name="LINE_REFUND_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="LINE_REFUND_USD" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tAggregateRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="736" posY="288">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tAggregateRow_2"/>
+    <elementParameter field="TEXT" name="LABEL" value="AGG_BY_REASON"/>
+    <elementParameter field="TABLE" name="GROUPBYS" value="">
+      <elementValue elementRef="OUTPUT_COLUMN" value="PRODUCT_ID"/>
+      <elementValue elementRef="INPUT_COLUMN" value="PRODUCT_ID"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="REASON_CODE"/>
+      <elementValue elementRef="INPUT_COLUMN" value="REASON_CODE"/>
+    </elementParameter>
+    <elementParameter field="TABLE" name="OPERATIONS" value="">
+      <elementValue elementRef="OUTPUT_COLUMN" value="REASON_QTY"/>
+      <elementValue elementRef="FUNCTION" value="sum"/>
+      <elementValue elementRef="INPUT_COLUMN" value="RETURN_QTY"/>
+      <elementValue elementRef="IGNORE_NULL" value="false"/>
+    </elementParameter>
+    <metadata connector="FLOW" label="tAggregateRow_2" name="tAggregateRow_2">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="true" length="255" name="REASON_CODE" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="REASON_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="REASON_QTY" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSortRow" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="928" posY="288">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSortRow_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="SORT_TOP_REASON"/>
+    <elementParameter field="TABLE" name="CRITERIA" value="">
+      <elementValue elementRef="COLNAME" value="PRODUCT_ID"/>
+      <elementValue elementRef="SORT" value="num"/>
+      <elementValue elementRef="ORDER" value="asc"/>
+      <elementValue elementRef="COLNAME" value="REASON_QTY"/>
+      <elementValue elementRef="SORT" value="num"/>
+      <elementValue elementRef="ORDER" value="desc"/>
+      <elementValue elementRef="COLNAME" value="REASON_CODE"/>
+      <elementValue elementRef="SORT" value="alpha"/>
+      <elementValue elementRef="ORDER" value="asc"/>
+    </elementParameter>
+    <elementParameter field="CHECK" name="EXTERNAL" value="false"/>
+    <metadata connector="FLOW" label="tSortRow_1" name="tSortRow_1">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="true" length="255" name="REASON_CODE" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="REASON_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="REASON_QTY" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tUniqRow" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="1120" posY="288">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tUniqRow_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="FIRST_REASON_PER_PRODUCT"/>
+    <elementParameter field="TABLE" name="UNIQUE_KEY" value="">
+      <elementValue elementRef="SCHEMA_COLUMN" value="PRODUCT_ID"/>
+      <elementValue elementRef="KEY_ATTRIBUTE" value="true"/>
+      <elementValue elementRef="CASE_SENSITIVE" value="false"/>
+      <elementValue elementRef="SCHEMA_COLUMN" value="REASON_CODE"/>
+      <elementValue elementRef="KEY_ATTRIBUTE" value="false"/>
+      <elementValue elementRef="CASE_SENSITIVE" value="false"/>
+      <elementValue elementRef="SCHEMA_COLUMN" value="REASON_QTY"/>
+      <elementValue elementRef="KEY_ATTRIBUTE" value="false"/>
+      <elementValue elementRef="CASE_SENSITIVE" value="false"/>
+    </elementParameter>
+    <elementParameter field="CHECK" name="ONLY_ONCE_EACH_DUPLICATED_KEY" value="false"/>
+    <metadata connector="UNIQUE" label="tUniqRow_1" name="tUniqRow_1">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="true" length="255" name="REASON_CODE" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="REASON_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="REASON_QTY" usefulColumn="true"/>
+    </metadata>
+    <metadata connector="DUPLICATE" label="tUniqRow_1_DUPLICATE" name="tUniqRow_1_DUPLICATE">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="true" length="255" name="REASON_CODE" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="REASON_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="REASON_QTY" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tHashOutput" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="1312" posY="288">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tHashOutput_2"/>
+    <elementParameter field="TEXT" name="LABEL" value="HASH_TOP_REASON"/>
+    <elementParameter field="CHECK" name="LINK_WITH" value="false"/>
+    <elementParameter field="CLOSED_LIST" name="KEYS_MANAGEMENT" value="KEEP_ALL"/>
+    <elementParameter field="CHECK" name="APPEND" value="false"/>
+    <metadata connector="FLOW" label="tHashOutput_2" name="tHashOutput_2">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="true" length="255" name="REASON_CODE" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="REASON_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="REASON_QTY" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tNote" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="928" posY="400">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tNote_2"/>
+    <elementParameter field="MEMO" name="TEXT" value="TOP_RETURN_REASON = reason code with the most RAW returned units for the product (uncapped).&#10;Tie-break: alphabetical reason code (sort criteria 3). Codes are upper/trimmed in tMap_1.&#10;Products with no returns get 'NONE' in tMap_3."/>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="800">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_6"/>
+    <elementParameter field="TEXT" name="LABEL" value="ORDER_LINES"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;ORDER_LINES&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT ORDER_LINE_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE, DISCOUNT_PCT&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.ORDER_LINES&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_6" name="tSnowflakeInput_6">
+      <column key="true" length="38" name="ORDER_LINE_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="ORDER_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="10" name="QUANTITY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="QUANTITY" usefulColumn="true"/>
+      <column key="false" length="18" name="UNIT_PRICE" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="UNIT_PRICE" usefulColumn="true"/>
+      <column key="false" length="10" name="DISCOUNT_PCT" nullable="true" pattern="" precision="4" sourceType="NUMBER" type="id_BigDecimal" originalField="DISCOUNT_PCT" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="928">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_7"/>
+    <elementParameter field="TEXT" name="LABEL" value="ORDERS (lkp)"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;ORDERS&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, CURRENCY_CODE&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.ORDERS&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_7" name="tSnowflakeInput_7">
+      <column key="true" length="38" name="ORDER_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="CUSTOMER_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="CUSTOMER_ID" usefulColumn="true"/>
+      <column key="false" length="0" name="ORDER_DATE" nullable="true" pattern="&quot;yyyy-MM-dd&quot;" precision="0" sourceType="DATE" type="id_Date" originalField="ORDER_DATE" usefulColumn="true"/>
+      <column key="false" length="255" name="STATUS" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="STATUS" usefulColumn="true"/>
+      <column key="false" length="255" name="CURRENCY_CODE" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CURRENCY_CODE" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="1024">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_8"/>
+    <elementParameter field="TEXT" name="LABEL" value="CUSTOMERS (lkp)"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;CUSTOMERS&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT CUSTOMER_ID, IS_TEST_ACCOUNT&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.CUSTOMERS&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_8" name="tSnowflakeInput_8">
+      <column key="true" length="38" name="CUSTOMER_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="CUSTOMER_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="IS_TEST_ACCOUNT" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="IS_TEST_ACCOUNT" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tSnowflakeInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="1120">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_9"/>
+    <elementParameter field="TEXT" name="LABEL" value="PRODUCTS (lkp)"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;PRODUCTS&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="QUERYSTORE" value="BUILT_IN"/>
+    <elementParameter field="CLOSED_LIST" name="MANUAL_QUERY" value="true"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SELECT PRODUCT_ID, SKU, PRODUCT_NAME, CATEGORY&#10;FROM &quot; + context.src_database + &quot;.&quot; + context.src_schema + &quot;.PRODUCTS&quot;"/>
+    <elementParameter field="CHECK" name="TRIM_ALL_COLUMN" value="false"/>
+    <metadata connector="FLOW" label="tSnowflakeInput_9" name="tSnowflakeInput_9">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="SKU" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="SKU" usefulColumn="true"/>
+      <column key="false" length="255" name="PRODUCT_NAME" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="PRODUCT_NAME" usefulColumn="true"/>
+      <column key="false" length="255" name="CATEGORY" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CATEGORY" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tHashInput" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="64" posY="1216">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tHashInput_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="LINE_RETURNS (lkp)"/>
+    <elementParameter field="CHECK" name="LINK_WITH" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="LIST" value="tHashOutput_1"/>
+    <elementParameter field="CHECK" name="RELEASE_CACHE" value="true"/>
+    <metadata connector="FLOW" label="tHashInput_1" name="tHashInput_1">
+      <column key="true" length="38" name="ORDER_LINE_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="ORDER_LINE_ID" usefulColumn="true"/>
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="10" name="LINE_RETURN_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="LINE_RETURN_QTY" usefulColumn="true"/>
+      <column key="false" length="18" name="LINE_REFUND_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="LINE_REFUND_USD" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="320" posY="800">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_2"/>
+    <elementParameter field="TEXT" name="LABEL" value="MAP_SALES_LINES"/>
+    <elementParameter field="EXTERNAL" name="MAP" value=""/>
+    <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
+    <elementParameter field="CHECK" name="DIE_ON_ERROR" value="true"/>
+    <metadata connector="FLOW" label="out_sales" name="out_sales">
+      <column key="false" length="38" name="PRODUCT_ID" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="SKU" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="SKU" usefulColumn="true"/>
+      <column key="false" length="255" name="PRODUCT_NAME" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="PRODUCT_NAME" usefulColumn="true"/>
+      <column key="false" length="255" name="CATEGORY" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CATEGORY" usefulColumn="true"/>
+      <column key="false" length="10" name="QUANTITY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="QUANTITY" usefulColumn="true"/>
+      <column key="false" length="10" name="CAPPED_RETURNED_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="CAPPED_RETURNED_QTY" usefulColumn="true"/>
+      <column key="false" length="18" name="LINE_REFUND_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="LINE_REFUND_USD" usefulColumn="true"/>
+    </metadata>
+    <nodeData xsi:type="TalendMapper:MapperData">
+      <uiProperties shellMaximized="true"/>
+      <varTables sizeState="INTERMEDIATE" name="Var" minimized="false">
+        <mapperTableEntries name="capped_returned" expression="lkp_line_returns.LINE_RETURN_QTY == null ? 0 : Math.min(lkp_line_returns.LINE_RETURN_QTY, row_lines.QUANTITY)" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="line_refund" expression="lkp_line_returns.LINE_REFUND_USD == null ? java.math.BigDecimal.ZERO : lkp_line_returns.LINE_REFUND_USD" type="id_BigDecimal" nullable="true"/>
+      </varTables>
+      <outputTables sizeState="INTERMEDIATE" name="out_sales" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="PRODUCT_ID" expression="lkp_products.PRODUCT_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="SKU" expression="lkp_products.SKU" type="id_String" nullable="true"/>
+        <mapperTableEntries name="PRODUCT_NAME" expression="lkp_products.PRODUCT_NAME" type="id_String" nullable="true"/>
+        <mapperTableEntries name="CATEGORY" expression="lkp_products.CATEGORY" type="id_String" nullable="true"/>
+        <mapperTableEntries name="QUANTITY" expression="row_lines.QUANTITY" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="CAPPED_RETURNED_QTY" expression="Var.capped_returned" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="LINE_REFUND_USD" expression="Var.line_refund" type="id_BigDecimal" nullable="true"/>
+      </outputTables>
+      <inputTables sizeState="INTERMEDIATE" name="row_lines" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE">
+        <mapperTableEntries name="ORDER_LINE_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="ORDER_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="PRODUCT_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="QUANTITY" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="UNIT_PRICE" type="id_BigDecimal" nullable="true"/>
+        <mapperTableEntries name="DISCOUNT_PCT" type="id_BigDecimal" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_orders2" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="true" activateExpressionFilter="true" expressionFilter="java.util.Arrays.asList(&quot;COMPLETED&quot;, &quot;SHIPPED&quot;, &quot;RETURNED&quot;).contains(lkp_orders2.STATUS == null ? &quot;&quot; : StringHandling.UPCASE(lkp_orders2.STATUS.trim()))">
+        <mapperTableEntries name="ORDER_ID" type="id_Long" nullable="true" expression="row_lines.ORDER_ID" operator="="/>
+        <mapperTableEntries name="CUSTOMER_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="ORDER_DATE" type="id_Date" nullable="true"/>
+        <mapperTableEntries name="STATUS" type="id_String" nullable="true"/>
+        <mapperTableEntries name="CURRENCY_CODE" type="id_String" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_customers2" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="true" activateExpressionFilter="true" expressionFilter="!&quot;Y&quot;.equals(lkp_customers2.IS_TEST_ACCOUNT == null ? &quot;N&quot; : StringHandling.UPCASE(lkp_customers2.IS_TEST_ACCOUNT.trim()))">
+        <mapperTableEntries name="CUSTOMER_ID" type="id_Long" nullable="true" expression="lkp_orders2.CUSTOMER_ID" operator="="/>
+        <mapperTableEntries name="IS_TEST_ACCOUNT" type="id_String" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_products" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="true" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="PRODUCT_ID" type="id_Long" nullable="true" expression="row_lines.PRODUCT_ID" operator="="/>
+        <mapperTableEntries name="SKU" type="id_String" nullable="true"/>
+        <mapperTableEntries name="PRODUCT_NAME" type="id_String" nullable="true"/>
+        <mapperTableEntries name="CATEGORY" type="id_String" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_line_returns" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="false" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="ORDER_LINE_ID" type="id_Long" nullable="true" expression="row_lines.ORDER_LINE_ID" operator="="/>
+        <mapperTableEntries name="PRODUCT_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="LINE_RETURN_QTY" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="LINE_REFUND_USD" type="id_BigDecimal" nullable="true"/>
+      </inputTables>
+    </nodeData>
+  </node>
+  <node componentName="tNote" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="320" posY="704">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tNote_3"/>
+    <elementParameter field="MEMO" name="TEXT" value="TKT-4471 (2021-03): cap returned qty at sold qty per order line - duplicate return&#10;records from the RMA system were pushing return_rate over 100%. Refund $ is NOT capped (finance decision).&#10;PRODUCTS lookup is INNER: lines for deleted products are dropped from this report."/>
+  </node>
+  <node componentName="tAggregateRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="544" posY="800">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tAggregateRow_3"/>
+    <elementParameter field="TEXT" name="LABEL" value="AGG_BY_PRODUCT"/>
+    <elementParameter field="TABLE" name="GROUPBYS" value="">
+      <elementValue elementRef="OUTPUT_COLUMN" value="PRODUCT_ID"/>
+      <elementValue elementRef="INPUT_COLUMN" value="PRODUCT_ID"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="SKU"/>
+      <elementValue elementRef="INPUT_COLUMN" value="SKU"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="PRODUCT_NAME"/>
+      <elementValue elementRef="INPUT_COLUMN" value="PRODUCT_NAME"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="CATEGORY"/>
+      <elementValue elementRef="INPUT_COLUMN" value="CATEGORY"/>
+    </elementParameter>
+    <elementParameter field="TABLE" name="OPERATIONS" value="">
+      <elementValue elementRef="OUTPUT_COLUMN" value="UNITS_SOLD"/>
+      <elementValue elementRef="FUNCTION" value="sum"/>
+      <elementValue elementRef="INPUT_COLUMN" value="QUANTITY"/>
+      <elementValue elementRef="IGNORE_NULL" value="false"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="UNITS_RETURNED"/>
+      <elementValue elementRef="FUNCTION" value="sum"/>
+      <elementValue elementRef="INPUT_COLUMN" value="CAPPED_RETURNED_QTY"/>
+      <elementValue elementRef="IGNORE_NULL" value="false"/>
+      <elementValue elementRef="OUTPUT_COLUMN" value="REFUND_AMOUNT_USD"/>
+      <elementValue elementRef="FUNCTION" value="sum"/>
+      <elementValue elementRef="INPUT_COLUMN" value="LINE_REFUND_USD"/>
+      <elementValue elementRef="IGNORE_NULL" value="false"/>
+    </elementParameter>
+    <metadata connector="FLOW" label="tAggregateRow_3" name="tAggregateRow_3">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="SKU" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="SKU" usefulColumn="true"/>
+      <column key="false" length="255" name="PRODUCT_NAME" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="PRODUCT_NAME" usefulColumn="true"/>
+      <column key="false" length="255" name="CATEGORY" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CATEGORY" usefulColumn="true"/>
+      <column key="false" length="10" name="UNITS_SOLD" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="UNITS_SOLD" usefulColumn="true"/>
+      <column key="false" length="10" name="UNITS_RETURNED" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="UNITS_RETURNED" usefulColumn="true"/>
+      <column key="false" length="18" name="REFUND_AMOUNT_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="REFUND_AMOUNT_USD" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tHashInput" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="544" posY="960">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tHashInput_2"/>
+    <elementParameter field="TEXT" name="LABEL" value="TOP_REASON (lkp)"/>
+    <elementParameter field="CHECK" name="LINK_WITH" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="LIST" value="tHashOutput_2"/>
+    <elementParameter field="CHECK" name="RELEASE_CACHE" value="true"/>
+    <metadata connector="FLOW" label="tHashInput_2" name="tHashInput_2">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="true" length="255" name="REASON_CODE" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="REASON_CODE" usefulColumn="true"/>
+      <column key="false" length="10" name="REASON_QTY" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="REASON_QTY" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="768" posY="800">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_3"/>
+    <elementParameter field="TEXT" name="LABEL" value="MAP_RATE_FLAG_REASON"/>
+    <elementParameter field="EXTERNAL" name="MAP" value=""/>
+    <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
+    <elementParameter field="CHECK" name="DIE_ON_ERROR" value="true"/>
+    <metadata connector="FLOW" label="out_summary" name="out_summary">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="SKU" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="SKU" usefulColumn="true"/>
+      <column key="false" length="255" name="PRODUCT_NAME" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="PRODUCT_NAME" usefulColumn="true"/>
+      <column key="false" length="255" name="CATEGORY" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CATEGORY" usefulColumn="true"/>
+      <column key="false" length="10" name="UNITS_SOLD" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="UNITS_SOLD" usefulColumn="true"/>
+      <column key="false" length="10" name="UNITS_RETURNED" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="UNITS_RETURNED" usefulColumn="true"/>
+      <column key="false" length="10" name="RETURN_RATE" nullable="true" pattern="" precision="4" sourceType="NUMBER" type="id_BigDecimal" originalField="RETURN_RATE" usefulColumn="true"/>
+      <column key="false" length="18" name="REFUND_AMOUNT_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="REFUND_AMOUNT_USD" usefulColumn="true"/>
+      <column key="false" length="255" name="TOP_RETURN_REASON" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="TOP_RETURN_REASON" usefulColumn="true"/>
+      <column key="false" length="255" name="RETURN_FLAG" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="RETURN_FLAG" usefulColumn="true"/>
+      <column key="false" length="0" name="ETL_LOAD_TS" nullable="true" pattern="&quot;yyyy-MM-dd HH:mm:ss&quot;" precision="0" sourceType="TIMESTAMP_NTZ" type="id_Date" originalField="ETL_LOAD_TS" usefulColumn="true"/>
+    </metadata>
+    <nodeData xsi:type="TalendMapper:MapperData">
+      <uiProperties shellMaximized="true"/>
+      <varTables sizeState="INTERMEDIATE" name="Var" minimized="false">
+        <mapperTableEntries name="return_rate" expression="row_prod_agg.UNITS_SOLD &gt; 0 ? new java.math.BigDecimal(row_prod_agg.UNITS_RETURNED).divide(new java.math.BigDecimal(row_prod_agg.UNITS_SOLD), 4, java.math.RoundingMode.HALF_UP) : new java.math.BigDecimal(&quot;0.0000&quot;)" type="id_BigDecimal" nullable="true"/>
+        <mapperTableEntries name="return_flag" expression="(row_prod_agg.UNITS_SOLD &gt;= 10 &amp;&amp; Var.return_rate.compareTo(new java.math.BigDecimal(&quot;0.15&quot;)) &gt;= 0) ? &quot;HIGH&quot; : (Var.return_rate.compareTo(new java.math.BigDecimal(&quot;0.08&quot;)) &gt;= 0 ? &quot;WATCH&quot; : &quot;NORMAL&quot;)" type="id_String" nullable="true"/>
+        <mapperTableEntries name="top_return_reason" expression="lkp_top_reason.REASON_CODE == null ? &quot;NONE&quot; : &quot;DMG&quot;.equals(lkp_top_reason.REASON_CODE) ? &quot;Damaged&quot; : &quot;SIZE&quot;.equals(lkp_top_reason.REASON_CODE) ? &quot;Wrong Size&quot; : &quot;DESC&quot;.equals(lkp_top_reason.REASON_CODE) ? &quot;Not As Described&quot; : &quot;MIND&quot;.equals(lkp_top_reason.REASON_CODE) ? &quot;Changed Mind&quot; : &quot;Other&quot;" type="id_String" nullable="true"/>
+      </varTables>
+      <outputTables sizeState="INTERMEDIATE" name="out_summary" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="PRODUCT_ID" expression="row_prod_agg.PRODUCT_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="SKU" expression="row_prod_agg.SKU" type="id_String" nullable="true"/>
+        <mapperTableEntries name="PRODUCT_NAME" expression="row_prod_agg.PRODUCT_NAME" type="id_String" nullable="true"/>
+        <mapperTableEntries name="CATEGORY" expression="row_prod_agg.CATEGORY" type="id_String" nullable="true"/>
+        <mapperTableEntries name="UNITS_SOLD" expression="row_prod_agg.UNITS_SOLD" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="UNITS_RETURNED" expression="row_prod_agg.UNITS_RETURNED" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="RETURN_RATE" expression="Var.return_rate" type="id_BigDecimal" nullable="true"/>
+        <mapperTableEntries name="REFUND_AMOUNT_USD" expression="row_prod_agg.REFUND_AMOUNT_USD.setScale(2, java.math.RoundingMode.HALF_UP)" type="id_BigDecimal" nullable="true"/>
+        <mapperTableEntries name="TOP_RETURN_REASON" expression="Var.top_return_reason" type="id_String" nullable="true"/>
+        <mapperTableEntries name="RETURN_FLAG" expression="Var.return_flag" type="id_String" nullable="true"/>
+        <mapperTableEntries name="ETL_LOAD_TS" expression="TalendDate.getCurrentDate()" type="id_Date" nullable="true"/>
+      </outputTables>
+      <inputTables sizeState="INTERMEDIATE" name="row_prod_agg" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE">
+        <mapperTableEntries name="PRODUCT_ID" type="id_Long" nullable="true"/>
+        <mapperTableEntries name="SKU" type="id_String" nullable="true"/>
+        <mapperTableEntries name="PRODUCT_NAME" type="id_String" nullable="true"/>
+        <mapperTableEntries name="CATEGORY" type="id_String" nullable="true"/>
+        <mapperTableEntries name="UNITS_SOLD" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="UNITS_RETURNED" type="id_Integer" nullable="true"/>
+        <mapperTableEntries name="REFUND_AMOUNT_USD" type="id_BigDecimal" nullable="true"/>
+      </inputTables>
+      <inputTables sizeState="INTERMEDIATE" name="lkp_top_reason" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE" innerJoin="false" activateExpressionFilter="false" expressionFilter="">
+        <mapperTableEntries name="PRODUCT_ID" type="id_Long" nullable="true" expression="row_prod_agg.PRODUCT_ID" operator="="/>
+        <mapperTableEntries name="REASON_CODE" type="id_String" nullable="true"/>
+        <mapperTableEntries name="REASON_QTY" type="id_Integer" nullable="true"/>
+      </inputTables>
+    </nodeData>
+  </node>
+  <node componentName="tSnowflakeOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="992" posY="800">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeOutput_1"/>
+    <elementParameter field="TEXT" name="LABEL" value="PRODUCT_RETURNS_SUMMARY"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+    <elementParameter field="TEXT" name="DATABASE" value="context.tgt_database"/>
+    <elementParameter field="TEXT" name="SCHEMA" value="context.tgt_schema"/>
+    <elementParameter field="TEXT" name="TABLE" value="&quot;PRODUCT_RETURNS_SUMMARY&quot;"/>
+    <elementParameter field="CLOSED_LIST" name="TABLE_ACTION" value="TRUNCATE"/>
+    <elementParameter field="CLOSED_LIST" name="DATA_ACTION" value="INSERT"/>
+    <elementParameter field="CHECK" name="DIE_ON_ERROR" value="true"/>
+    <elementParameter field="TEXT" name="BATCH_SIZE" value="10000"/>
+    <metadata connector="FLOW" label="tSnowflakeOutput_1" name="tSnowflakeOutput_1">
+      <column key="true" length="38" name="PRODUCT_ID" nullable="false" pattern="" precision="0" sourceType="NUMBER" type="id_Long" originalField="PRODUCT_ID" usefulColumn="true"/>
+      <column key="false" length="255" name="SKU" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="SKU" usefulColumn="true"/>
+      <column key="false" length="255" name="PRODUCT_NAME" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="PRODUCT_NAME" usefulColumn="true"/>
+      <column key="false" length="255" name="CATEGORY" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="CATEGORY" usefulColumn="true"/>
+      <column key="false" length="10" name="UNITS_SOLD" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="UNITS_SOLD" usefulColumn="true"/>
+      <column key="false" length="10" name="UNITS_RETURNED" nullable="true" pattern="" precision="0" sourceType="NUMBER" type="id_Integer" originalField="UNITS_RETURNED" usefulColumn="true"/>
+      <column key="false" length="10" name="RETURN_RATE" nullable="true" pattern="" precision="4" sourceType="NUMBER" type="id_BigDecimal" originalField="RETURN_RATE" usefulColumn="true"/>
+      <column key="false" length="18" name="REFUND_AMOUNT_USD" nullable="true" pattern="" precision="2" sourceType="NUMBER" type="id_BigDecimal" originalField="REFUND_AMOUNT_USD" usefulColumn="true"/>
+      <column key="false" length="255" name="TOP_RETURN_REASON" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="TOP_RETURN_REASON" usefulColumn="true"/>
+      <column key="false" length="255" name="RETURN_FLAG" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalField="RETURN_FLAG" usefulColumn="true"/>
+      <column key="false" length="0" name="ETL_LOAD_TS" nullable="true" pattern="&quot;yyyy-MM-dd HH:mm:ss&quot;" precision="0" sourceType="TIMESTAMP_NTZ" type="id_Date" originalField="ETL_LOAD_TS" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tPostjob" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="64" posY="1376">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostjob_1"/>
+  </node>
+  <node componentName="tSnowflakeClose" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="256" posY="1376">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeClose_1"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tSnowflakeConnection_1"/>
+  </node>
+  <connection connectorName="COMPONENT_OK" label="OnComponentOk1" lineStyle="4" metaname="tPrejob_1" offsetLabelX="0" offsetLabelY="0" source="tPrejob_1" target="tSnowflakeConnection_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnComponentOk1"/>
+  </connection>
+  <connection connectorName="SUBJOB_OK" label="OnSubjobOk1" lineStyle="1" metaname="tSnowflakeConnection_1" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeConnection_1" target="tSnowflakeInput_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk1"/>
+  </connection>
+  <connection connectorName="FLOW" label="row_returns" lineStyle="0" metaname="tSnowflakeInput_1" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_1" target="tMap_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="row_returns"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_order_lines" lineStyle="8" metaname="tSnowflakeInput_2" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_2" target="tMap_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_order_lines"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_orders" lineStyle="8" metaname="tSnowflakeInput_3" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_3" target="tMap_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_orders"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_customers" lineStyle="8" metaname="tSnowflakeInput_4" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_4" target="tMap_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_customers"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_fx_rates" lineStyle="8" metaname="tSnowflakeInput_5" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_5" target="tMap_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_fx_rates"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="out_returns" lineStyle="0" metaname="out_returns" offsetLabelX="0" offsetLabelY="0" source="tMap_1" target="tReplicate_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="out_returns"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="returns_by_line" lineStyle="0" metaname="tReplicate_1" offsetLabelX="0" offsetLabelY="0" source="tReplicate_1" target="tAggregateRow_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="returns_by_line"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="returns_by_reason" lineStyle="0" metaname="tReplicate_1" offsetLabelX="0" offsetLabelY="0" source="tReplicate_1" target="tAggregateRow_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="returns_by_reason"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="line_returns" lineStyle="0" metaname="tAggregateRow_1" offsetLabelX="0" offsetLabelY="0" source="tAggregateRow_1" target="tHashOutput_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="line_returns"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="reason_qty" lineStyle="0" metaname="tAggregateRow_2" offsetLabelX="0" offsetLabelY="0" source="tAggregateRow_2" target="tSortRow_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="reason_qty"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="reason_sorted" lineStyle="0" metaname="tSortRow_1" offsetLabelX="0" offsetLabelY="0" source="tSortRow_1" target="tUniqRow_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="reason_sorted"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="UNIQUE" label="top_reason" lineStyle="0" metaname="tUniqRow_1" offsetLabelX="0" offsetLabelY="0" source="tUniqRow_1" target="tHashOutput_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="top_reason"/>
+  </connection>
+  <connection connectorName="SUBJOB_OK" label="OnSubjobOk2" lineStyle="1" metaname="tSnowflakeInput_1" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_1" target="tSnowflakeInput_6">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk2"/>
+  </connection>
+  <connection connectorName="FLOW" label="row_lines" lineStyle="0" metaname="tSnowflakeInput_6" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_6" target="tMap_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="row_lines"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_orders2" lineStyle="8" metaname="tSnowflakeInput_7" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_7" target="tMap_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_orders2"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_customers2" lineStyle="8" metaname="tSnowflakeInput_8" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_8" target="tMap_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_customers2"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_products" lineStyle="8" metaname="tSnowflakeInput_9" offsetLabelX="0" offsetLabelY="0" source="tSnowflakeInput_9" target="tMap_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_products"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_line_returns" lineStyle="8" metaname="tHashInput_1" offsetLabelX="0" offsetLabelY="0" source="tHashInput_1" target="tMap_2">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_line_returns"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="out_sales" lineStyle="0" metaname="out_sales" offsetLabelX="0" offsetLabelY="0" source="tMap_2" target="tAggregateRow_3">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="out_sales"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="row_prod_agg" lineStyle="0" metaname="tAggregateRow_3" offsetLabelX="0" offsetLabelY="0" source="tAggregateRow_3" target="tMap_3">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="row_prod_agg"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="lkp_top_reason" lineStyle="8" metaname="tHashInput_2" offsetLabelX="0" offsetLabelY="0" source="tHashInput_2" target="tMap_3">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="lkp_top_reason"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="FLOW" label="out_summary" lineStyle="0" metaname="out_summary" offsetLabelX="0" offsetLabelY="0" source="tMap_3" target="tSnowflakeOutput_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="out_summary"/>
+    <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
+  </connection>
+  <connection connectorName="COMPONENT_OK" label="OnComponentOk2" lineStyle="4" metaname="tPostjob_1" offsetLabelX="0" offsetLabelY="0" source="tPostjob_1" target="tSnowflakeClose_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnComponentOk2"/>
+  </connection>
+  <subjob>
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPrejob_1"/>
+    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="160,190,240"/>
+    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="220,230,255"/>
+  </subjob>
+  <subjob>
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_1"/>
+    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="160,190,240"/>
+    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="255,240,200"/>
+  </subjob>
+  <subjob>
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tSnowflakeInput_6"/>
+    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="160,190,240"/>
+    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="200,255,210"/>
+  </subjob>
+  <subjob>
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostjob_1"/>
+    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="160,190,240"/>
+    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="220,230,255"/>
+  </subjob>
+</talendfile:ProcessType>

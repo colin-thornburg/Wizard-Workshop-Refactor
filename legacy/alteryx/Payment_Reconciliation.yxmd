@@ -1,0 +1,711 @@
+<?xml version="1.0"?>
+<AlteryxDocument yxmdVer="2023.1">
+  <Nodes>
+    <!-- ===================== ORDERS ===================== -->
+    <Node ToolID="1">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="54" y="90" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="23">odbc:DSN=SNOWFLAKE_PROD;UID=SVC_ALTERYX_FIN;PWD=__EncPwd1__;Warehouse=FIN_WH;Role=FIN_ETL|||SELECT
+    ORDER_ID,
+    CUSTOMER_ID,
+    ORDER_DATE,
+    STATUS,
+    CHANNEL,
+    CURRENCY_CODE,
+    SHIPPING_COST
+FROM RAW.SHOP.ORDERS
+WHERE UPPER(TRIM(STATUS)) &lt;&gt; 'CANCELLED'</File>
+          <FormatSpecificOptions>
+            <PreSQL />
+            <PreSQLOnConfig>True</PreSQLOnConfig>
+            <NoProgress>True</NoProgress>
+            <CacheData>False</CacheData>
+            <TableStyle>Quoted</TableStyle>
+            <ReadUncommitted>False</ReadUncommitted>
+            <PostSQL />
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Orders (excl. CANCELLED)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="ORDER_ID" source="Odbc:SNOWFLAKE_PROD" type="Int64" />
+            <Field name="CUSTOMER_ID" source="Odbc:SNOWFLAKE_PROD" type="Int64" />
+            <Field name="ORDER_DATE" source="Odbc:SNOWFLAKE_PROD" type="Date" />
+            <Field name="STATUS" size="16777216" source="Odbc:SNOWFLAKE_PROD" type="V_WString" />
+            <Field name="CHANNEL" size="16777216" source="Odbc:SNOWFLAKE_PROD" type="V_WString" />
+            <Field name="CURRENCY_CODE" size="16777216" source="Odbc:SNOWFLAKE_PROD" type="V_WString" />
+            <Field name="SHIPPING_COST" scale="2" size="18" source="Odbc:SNOWFLAKE_PROD" type="FixedDecimal" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+
+    <!-- ===================== ORDER LINES ===================== -->
+    <Node ToolID="2">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="54" y="210" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="23">odbc:DSN=SNOWFLAKE_PROD;UID=SVC_ALTERYX_FIN;PWD=__EncPwd1__;Warehouse=FIN_WH;Role=FIN_ETL|||SELECT
+    ORDER_LINE_ID,
+    ORDER_ID,
+    PRODUCT_ID,
+    QUANTITY,
+    UNIT_PRICE,
+    DISCOUNT_PCT
+FROM RAW.SHOP.ORDER_LINES</File>
+          <FormatSpecificOptions>
+            <PreSQL />
+            <PreSQLOnConfig>True</PreSQLOnConfig>
+            <NoProgress>True</NoProgress>
+            <CacheData>False</CacheData>
+            <TableStyle>Quoted</TableStyle>
+            <ReadUncommitted>False</ReadUncommitted>
+            <PostSQL />
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Order lines</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="ORDER_LINE_ID" source="Odbc:SNOWFLAKE_PROD" type="Int64" />
+            <Field name="ORDER_ID" source="Odbc:SNOWFLAKE_PROD" type="Int64" />
+            <Field name="PRODUCT_ID" source="Odbc:SNOWFLAKE_PROD" type="Int64" />
+            <Field name="QUANTITY" source="Odbc:SNOWFLAKE_PROD" type="Int32" />
+            <Field name="UNIT_PRICE" scale="2" size="18" source="Odbc:SNOWFLAKE_PROD" type="FixedDecimal" />
+            <Field name="DISCOUNT_PCT" scale="4" size="8" source="Odbc:SNOWFLAKE_PROD" type="FixedDecimal" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+
+    <Node ToolID="3">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="186" y="210" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="[QUANTITY] * [UNIT_PRICE] - Round([QUANTITY] * [UNIT_PRICE] * [DISCOUNT_PCT], 0.01)" field="LINE_NET" size="18.2" type="FixedDecimal" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>LINE_NET = qty*price - Round(qty*price*disc, 0.01)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+
+    <Node ToolID="4">
+      <GuiSettings Plugin="AlteryxSpatialPluginsGui.Summarize.Summarize">
+        <Position x="306" y="210" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <SummarizeFields>
+            <SummarizeField field="ORDER_ID" action="GroupBy" rename="ORDER_ID" />
+            <SummarizeField field="LINE_NET" action="Sum" rename="ITEMS_NET" />
+          </SummarizeFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Items net per order</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxSpatialPluginsEngine.dll" EngineDllEntryPoint="AlteryxSummarize" />
+    </Node>
+
+    <!-- Orders + line totals: only J output is used (orders with no lines are dropped) -->
+    <Node ToolID="5">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Join.Join">
+        <Position x="426" y="138" />
+      </GuiSettings>
+      <Properties>
+        <Configuration joinByRecordPos="False">
+          <JoinInfo connection="Left">
+            <Field field="ORDER_ID" />
+          </JoinInfo>
+          <JoinInfo connection="Right">
+            <Field field="ORDER_ID" />
+          </JoinInfo>
+          <SelectConfiguration>
+            <Configuration outputConnection="Join">
+              <OrderChanged value="False" />
+              <CommaDecimal value="False" />
+              <SelectFields>
+                <SelectField field="Right_ORDER_ID" selected="False" rename="Right_ORDER_ID" />
+                <SelectField field="Left_CHANNEL" selected="False" />
+                <SelectField field="*Unknown" selected="True" />
+              </SelectFields>
+            </Configuration>
+          </SelectConfiguration>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Join on ORDER_ID (J only)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxJoin" />
+    </Node>
+
+    <Node ToolID="6">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="546" y="138" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="Round([ITEMS_NET] + [SHIPPING_COST], 0.01)" field="EXPECTED_AMOUNT" size="18.2" type="FixedDecimal" />
+            <FormulaField expression="Uppercase(Trim([STATUS]))" field="ORDER_STATUS" size="20" type="V_WString" />
+            <FormulaField expression="Uppercase(Trim([CURRENCY_CODE]))" field="CURRENCY_CODE" size="3" type="V_WString" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>EXPECTED_AMOUNT = items net + shipping (order currency)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+
+    <!-- ===================== PAYMENTS ===================== -->
+    <Node ToolID="7">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="54" y="342" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="23">odbc:DSN=SNOWFLAKE_PROD;UID=SVC_ALTERYX_FIN;PWD=__EncPwd1__;Warehouse=FIN_WH;Role=FIN_ETL|||SELECT
+    PAYMENT_ID,
+    ORDER_ID,
+    PAYMENT_METHOD,
+    PAYMENT_STATUS,
+    AMOUNT,
+    PAYMENT_DATE
+FROM RAW.SHOP.PAYMENTS</File>
+          <FormatSpecificOptions>
+            <PreSQL />
+            <PreSQLOnConfig>True</PreSQLOnConfig>
+            <NoProgress>True</NoProgress>
+            <CacheData>False</CacheData>
+            <TableStyle>Quoted</TableStyle>
+            <ReadUncommitted>False</ReadUncommitted>
+            <PostSQL />
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Payments (all statuses)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="PAYMENT_ID" source="Odbc:SNOWFLAKE_PROD" type="Int64" />
+            <Field name="ORDER_ID" source="Odbc:SNOWFLAKE_PROD" type="Int64" />
+            <Field name="PAYMENT_METHOD" size="16777216" source="Odbc:SNOWFLAKE_PROD" type="V_WString" />
+            <Field name="PAYMENT_STATUS" size="16777216" source="Odbc:SNOWFLAKE_PROD" type="V_WString" />
+            <Field name="AMOUNT" scale="2" size="18" source="Odbc:SNOWFLAKE_PROD" type="FixedDecimal" />
+            <Field name="PAYMENT_DATE" source="Odbc:SNOWFLAKE_PROD" type="Date" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+
+    <Node ToolID="8">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="186" y="342" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="Uppercase(Trim([PAYMENT_STATUS]))" field="PAY_STATUS" size="20" type="V_WString" />
+            <FormulaField expression="IIF([PAY_STATUS] = &quot;CAPTURED&quot;, [AMOUNT], 0)" field="CAPTURED_AMT" size="18.2" type="FixedDecimal" />
+            <FormulaField expression="IIF([PAY_STATUS] = &quot;CAPTURED&quot;, 1, 0)" field="IS_CAPTURED" size="4" type="Int32" />
+            <FormulaField expression="IIF([PAY_STATUS] = &quot;FAILED&quot;, 1, 0)" field="IS_FAILED" size="4" type="Int32" />
+            <FormulaField expression="IIF([PAY_STATUS] = &quot;CAPTURED&quot;, [PAYMENT_DATE], Null())" field="CAPTURED_DATE" size="10" type="Date" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Flag CAPTURED / FAILED (REFUNDED ignored)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+
+    <Node ToolID="9">
+      <GuiSettings Plugin="AlteryxSpatialPluginsGui.Summarize.Summarize">
+        <Position x="306" y="342" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <SummarizeFields>
+            <SummarizeField field="ORDER_ID" action="GroupBy" rename="ORDER_ID" />
+            <SummarizeField field="CAPTURED_AMT" action="Sum" rename="CAPTURED_AMOUNT" />
+            <SummarizeField field="IS_CAPTURED" action="Sum" rename="CAPTURED_PAYMENT_COUNT" />
+            <SummarizeField field="IS_FAILED" action="Sum" rename="FAILED_PAYMENT_COUNT" />
+            <SummarizeField field="CAPTURED_DATE" action="Max" rename="LAST_CAPTURED_DATE" />
+          </SummarizeFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Payment summary per ORDER_ID</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxSpatialPluginsEngine.dll" EngineDllEntryPoint="AlteryxSummarize" />
+    </Node>
+
+    <!-- ===================== RECONCILE ===================== -->
+    <Node ToolID="10">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Join.Join">
+        <Position x="678" y="246" />
+      </GuiSettings>
+      <Properties>
+        <Configuration joinByRecordPos="False">
+          <JoinInfo connection="Left">
+            <Field field="ORDER_ID" />
+          </JoinInfo>
+          <JoinInfo connection="Right">
+            <Field field="ORDER_ID" />
+          </JoinInfo>
+          <SelectConfiguration>
+            <Configuration outputConnection="Join">
+              <OrderChanged value="False" />
+              <CommaDecimal value="False" />
+              <SelectFields>
+                <SelectField field="Right_ORDER_ID" selected="False" rename="Right_ORDER_ID" />
+                <SelectField field="Left_STATUS" selected="False" />
+                <SelectField field="Left_ITEMS_NET" selected="False" />
+                <SelectField field="Left_SHIPPING_COST" selected="False" />
+                <SelectField field="*Unknown" selected="True" />
+              </SelectFields>
+            </Configuration>
+          </SelectConfiguration>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Orders (L) vs payment summary (R)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxJoin" />
+    </Node>
+
+    <!-- J: order has payment rows -->
+    <Node ToolID="11">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="810" y="174" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="Round([CAPTURED_AMOUNT] - [EXPECTED_AMOUNT], 0.01)" field="VARIANCE_AMOUNT" size="18.2" type="FixedDecimal" />
+            <FormulaField expression="IIF([CAPTURED_PAYMENT_COUNT] = 0, &quot;NO_PAYMENT&quot;,&#xA;  IIF(Abs([VARIANCE_AMOUNT]) &lt;= 0.01, &quot;MATCHED&quot;,&#xA;    IIF([VARIANCE_AMOUNT] &lt; 0, &quot;UNDERPAID&quot;, &quot;OVERPAID&quot;)))" field="RECONCILIATION_STATUS" size="20" type="V_WString" />
+            <FormulaField expression="IIF(IsNull([LAST_CAPTURED_DATE]), Null(),&#xA;  DateTimeDiff([LAST_CAPTURED_DATE], [ORDER_DATE], &quot;days&quot;))" field="DAYS_TO_PAYMENT" size="4" type="Int32" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Matched orders: variance + status</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+
+    <!-- L: order with no payment rows at all -->
+    <Node ToolID="12">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="810" y="270" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="0" field="CAPTURED_AMOUNT" size="18.2" type="FixedDecimal" />
+            <FormulaField expression="0" field="CAPTURED_PAYMENT_COUNT" size="4" type="Int32" />
+            <FormulaField expression="0" field="FAILED_PAYMENT_COUNT" size="4" type="Int32" />
+            <FormulaField expression="Null()" field="LAST_CAPTURED_DATE" size="10" type="Date" />
+            <FormulaField expression="Null()" field="DAYS_TO_PAYMENT" size="4" type="Int32" />
+            <FormulaField expression="Round(0 - [EXPECTED_AMOUNT], 0.01)" field="VARIANCE_AMOUNT" size="18.2" type="FixedDecimal" />
+            <FormulaField expression="&quot;NO_PAYMENT&quot;" field="RECONCILIATION_STATUS" size="20" type="V_WString" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Orders without any payment</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+
+    <!-- R: payments with no (non-cancelled) order -->
+    <Node ToolID="13">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="810" y="366" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="Null()" field="CUSTOMER_ID" size="8" type="Int64" />
+            <FormulaField expression="Null()" field="ORDER_DATE" size="10" type="Date" />
+            <FormulaField expression="Null()" field="ORDER_STATUS" size="20" type="V_WString" />
+            <FormulaField expression="Null()" field="CURRENCY_CODE" size="3" type="V_WString" />
+            <FormulaField expression="Null()" field="EXPECTED_AMOUNT" size="18.2" type="FixedDecimal" />
+            <FormulaField expression="[CAPTURED_AMOUNT]" field="VARIANCE_AMOUNT" size="18.2" type="FixedDecimal" />
+            <FormulaField expression="Null()" field="DAYS_TO_PAYMENT" size="4" type="Int32" />
+            <FormulaField expression="&quot;UNMATCHED_PAYMENT&quot;" field="RECONCILIATION_STATUS" size="20" type="V_WString" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Payments with no open order</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+
+    <Node ToolID="14">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Union.Union">
+        <Position x="942" y="270" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <ByName_ErrorMode>Warning</ByName_ErrorMode>
+          <ByName_OutputMode>All</ByName_OutputMode>
+          <Mode>ByName</Mode>
+          <SetOutputOrder value="False" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Union J / L / R (by name)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxUnion" />
+    </Node>
+
+    <Node ToolID="15">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.AlteryxSelect.AlteryxSelect">
+        <Position x="1050" y="270" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <OrderChanged value="True" />
+          <CommaDecimal value="False" />
+          <SelectFields>
+            <SelectField field="ORDER_ID" selected="True" type="Int64" size="8" />
+            <SelectField field="CUSTOMER_ID" selected="True" type="Int64" size="8" />
+            <SelectField field="ORDER_DATE" selected="True" type="Date" size="10" />
+            <SelectField field="ORDER_STATUS" selected="True" type="V_WString" size="20" />
+            <SelectField field="CURRENCY_CODE" selected="True" type="V_WString" size="3" />
+            <SelectField field="EXPECTED_AMOUNT" selected="True" type="FixedDecimal" size="18.2" />
+            <SelectField field="CAPTURED_AMOUNT" selected="True" type="FixedDecimal" size="18.2" />
+            <SelectField field="VARIANCE_AMOUNT" selected="True" type="FixedDecimal" size="18.2" />
+            <SelectField field="CAPTURED_PAYMENT_COUNT" selected="True" type="Int32" size="4" />
+            <SelectField field="FAILED_PAYMENT_COUNT" selected="True" type="Int32" size="4" />
+            <SelectField field="LAST_CAPTURED_DATE" selected="True" type="Date" size="10" />
+            <SelectField field="DAYS_TO_PAYMENT" selected="True" type="Int32" size="4" />
+            <SelectField field="RECONCILIATION_STATUS" selected="True" type="V_WString" size="20" />
+            <SelectField field="ITEMS_NET" selected="False" />
+            <SelectField field="SHIPPING_COST" selected="False" />
+            <SelectField field="STATUS" selected="False" />
+            <SelectField field="CHANNEL" selected="False" />
+            <SelectField field="*Unknown" selected="False" />
+          </SelectFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>Final layout</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSelect" />
+    </Node>
+
+    <Node ToolID="16">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="1158" y="270" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="DateTimeNow()" field="ETL_LOAD_TS" size="19" type="DateTime" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>ETL_LOAD_TS = DateTimeNow()</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+
+    <Node ToolID="17">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Sort.Sort">
+        <Position x="1266" y="270" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <SortInfo locale="0">
+            <Field field="ORDER_ID" order="Ascending" />
+          </SortInfo>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>ORDER_ID - Ascending</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSort" />
+    </Node>
+
+    <Node ToolID="18">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileOutput.DbFileOutput">
+        <Position x="1374" y="270" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <File MaxRecords="" FileFormat="23">odbc:DSN=SNOWFLAKE_PROD;UID=SVC_ALTERYX_FIN;PWD=__EncPwd1__;Warehouse=FIN_WH;Role=FIN_ETL|||ANALYTICS.LEGACY.PAYMENT_RECONCILIATION</File>
+          <Passwords />
+          <FormatSpecificOptions>
+            <TableStyle>Quoted</TableStyle>
+            <Geometry>True</Geometry>
+            <OutputOption>Delete</OutputOption>
+            <PostSQL />
+            <PreSQL />
+            <TransactionSize>10000</TransactionSize>
+            <IgnoreDropTableSQLErrors>False</IgnoreDropTableSQLErrors>
+            <SpatialObjSize>8000</SpatialObjSize>
+          </FormatSpecificOptions>
+          <MultiFile value="False" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>ANALYTICS.LEGACY.PAYMENT_RECONCILIATION (Delete Data &amp; Append)</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileOutput" />
+    </Node>
+
+    <!-- ===================== COMMENTS ===================== -->
+    <Node ToolID="19">
+      <GuiSettings Plugin="AlteryxGuiToolkit.TextBox.TextBox">
+        <Position x="42" y="6" width="456" height="66" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Text>Daily Payment Reconciliation (Finance Ops) - owner: M. Ramsey
+Test accounts are intentionally NOT excluded: Finance reconciles all money that moved, regardless of customer type.
+Cancelled orders are excluded at the source query; any payment on a cancelled order falls out of the R anchor as UNMATCHED_PAYMENT.</Text>
+          <Font name="Arial" size="8.25" style="0" />
+          <TextColor name="Black" />
+          <FillColor r="255" g="255" b="204" />
+          <Shape shape="0" />
+          <Justification Justification="0" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+
+    <Node ToolID="20">
+      <GuiSettings Plugin="AlteryxGuiToolkit.TextBox.TextBox">
+        <Position x="774" y="438" width="300" height="54" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Text>FIN-0912: matched tolerance = 1 cent (abs variance &lt;= 0.01).
+Only CAPTURED payments count toward CAPTURED_AMOUNT. FAILED are counted, REFUNDED are ignored.
+All amounts are in the order currency (no FX).</Text>
+          <Font name="Arial" size="8.25" style="0" />
+          <TextColor name="Black" />
+          <FillColor r="204" g="229" b="255" />
+          <Shape shape="0" />
+          <Justification Justification="0" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+
+    <Node ToolID="21">
+      <GuiSettings Plugin="AlteryxGuiToolkit.TextBox.TextBox">
+        <Position x="414" y="66" width="252" height="42" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Text>FIN-1047: orders with no lines drop out here (J output only). Known gap, accepted by Finance.</Text>
+          <Font name="Arial" size="8.25" style="0" />
+          <TextColor name="Black" />
+          <FillColor r="255" g="229" b="204" />
+          <Shape shape="0" />
+          <Justification Justification="0" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+  </Nodes>
+
+  <Connections>
+    <Connection>
+      <Origin ToolID="1" Connection="Output" />
+      <Destination ToolID="5" Connection="Left" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="2" Connection="Output" />
+      <Destination ToolID="3" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="3" Connection="Output" />
+      <Destination ToolID="4" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="4" Connection="Output" />
+      <Destination ToolID="5" Connection="Right" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="5" Connection="Join" />
+      <Destination ToolID="6" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="6" Connection="Output" />
+      <Destination ToolID="10" Connection="Left" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="7" Connection="Output" />
+      <Destination ToolID="8" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="8" Connection="Output" />
+      <Destination ToolID="9" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="9" Connection="Output" />
+      <Destination ToolID="10" Connection="Right" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="10" Connection="Join" />
+      <Destination ToolID="11" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="10" Connection="Left" />
+      <Destination ToolID="12" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="10" Connection="Right" />
+      <Destination ToolID="13" Connection="Input" />
+    </Connection>
+    <Connection name="#1">
+      <Origin ToolID="11" Connection="Output" />
+      <Destination ToolID="14" Connection="Input" />
+    </Connection>
+    <Connection name="#2">
+      <Origin ToolID="12" Connection="Output" />
+      <Destination ToolID="14" Connection="Input" />
+    </Connection>
+    <Connection name="#3">
+      <Origin ToolID="13" Connection="Output" />
+      <Destination ToolID="14" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="14" Connection="Output" />
+      <Destination ToolID="15" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="15" Connection="Output" />
+      <Destination ToolID="16" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="16" Connection="Output" />
+      <Destination ToolID="17" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="17" Connection="Output" />
+      <Destination ToolID="18" Connection="Input" />
+    </Connection>
+  </Connections>
+
+  <Properties>
+    <Memory default="True" />
+    <GlobalRecordLimit value="0" />
+    <TempFiles default="True" />
+    <Annotation on="True" includeToolName="False" />
+    <ConvErrorLimit value="10" />
+    <ConvErrorLimit_Stop value="False" />
+    <CancelOnError value="True" />
+    <DisableBrowse value="True" />
+    <EnablePerformanceProfiling value="False" />
+    <RunWithE2 value="True" />
+    <PredictiveToolsCodePage value="1252" />
+    <DisableAllOutput value="False" />
+    <ShowAllMacroMessages value="False" />
+    <ShowConnectionStatusIsOn value="True" />
+    <ShowConnectionStatusOnlyWhenRunning value="True" />
+    <ZoomLevel value="0" />
+    <LayoutType>Horizontal</LayoutType>
+    <MetaInfo>
+      <NameIsFileName value="True" />
+      <Name>Payment_Reconciliation</Name>
+      <Description>Nightly reconciliation of expected order amounts vs captured payments. Feeds ANALYTICS.LEGACY.PAYMENT_RECONCILIATION.</Description>
+      <RootToolName />
+      <ToolVersion />
+      <ToolInDb value="False" />
+      <CategoryName />
+      <SearchTags />
+      <Author>Finance Ops Analytics</Author>
+      <Company />
+      <Copyright />
+      <DescriptionLink actual="" displayed="" />
+      <Example>
+        <Description />
+        <File />
+      </Example>
+    </MetaInfo>
+    <Events>
+      <Enabled value="True" />
+    </Events>
+    <RuntimeProperties>
+      <Actions />
+      <Questions />
+      <ModuleRuntimeProperties />
+    </RuntimeProperties>
+  </Properties>
+</AlteryxDocument>

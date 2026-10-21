@@ -1,0 +1,22 @@
+sources:
+  - name: shop
+    description: >
+      Raw Summit Outfitters e-commerce data. In production this is RAW.SHOP.*; in this project
+      it is loaded with `dbt seed` into the <target schema>_raw schema.
+    database: "{{ target.database }}"
+    schema: "{{ target.schema }}_raw"
+    tables:
+      - name: customers
+        description: Customer master (legacy name RAW.SHOP.CUSTOMERS).
+      - name: products
+        description: Product catalog (legacy name RAW.SHOP.PRODUCTS).
+      - name: orders
+        description: Order headers (legacy name RAW.SHOP.ORDERS).
+      - name: order_lines
+        description: Order line items (legacy name RAW.SHOP.ORDER_LINES).
+      - name: payments
+        description: Payment attempts (legacy name RAW.SHOP.PAYMENTS).
+      - name: returns
+        description: Item returns (legacy name RAW.SHOP.RETURNS).
+      - name: fx_rates
+        description: Monthly FX rates to USD (legacy name RAW.SHOP.FX_RATES).

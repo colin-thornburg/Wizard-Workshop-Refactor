@@ -1,0 +1,221 @@
+customer_id,first_name,last_name,email,state,signup_date,loyalty_tier,is_test_account
+1,Finley,Ueda,finley.ueda1@proton.me,NY,2025-03-20,Silver,N
+2,Hayden,Holt,  hayden.holt2@outlook.com ,MN,2024-03-13,Bronze,N
+3,Emerson,Ellison,emerson.ellison3@outlook.com,WA,2026-01-27,Silver,N
+4,Omar,Quintero,omar.quintero4@yahoo.com,az,2025-02-11,Gold,N
+5,Parker,Ellison,parker.ellison5@proton.me,TX,2024-07-01,Silver,N
+6,Logan,Ellison,logan.ellison6@gmail.com,NM,2024-08-31,Gold,N
+7,Tomas,Petrov,tomas.petrov7@yahoo.com,MN,2024-01-08,Silver,N
+8,Cameron,Okafor,cameron.okafor8@proton.me,CA,2025-11-18,SILVER,N
+9,Morgan,Vance,morgan.vance9@yahoo.com,WY,2023-09-01, Bronze,N
+10,Kofi,Iverson,kofi.iverson10@yahoo.com,WY,2024-04-17,Bronze,N
+11,Diego,Nakamura,diego.nakamura11@gmail.com,VT,2023-12-11,Bronze,N
+12,Rowan,Ueda,rowan.ueda12@outlook.com,TX,2025-06-16,Bronze,N
+13,Quinn,Yates,QUINN.YATES13@YAHOO.COM,vt,2025-12-12,Silver,N
+14,Riley,Yates,riley.yates14@outlook.com,or,2023-12-12,Gold,N
+15,Marcus,Whitaker,marcus.whitaker15@yahoo.com,wy,2025-03-28,,N
+16,Priya,Okafor,PRIYA.OKAFOR16@YAHOO.COM,WY,2024-04-08,,N
+17,Finley,Xu,finley.xu17@yahoo.com,ID,2025-07-28,Bronze,N
+18,Kofi,Alder,kofi.alder18@outlook.com,OR,2023-12-03,Gold,N
+19,Lena,Ellison,lena.ellison19@gmail.com,MT,2025-12-03,Silver,N
+20,Logan,Jensen,logan.jensen20@icloud.com,CO,2025-11-21,Silver,N
+21,Morgan,Castillo,MORGAN.CASTILLO21@ICLOUD.COM,id,2024-02-13,Gold,N
+22,Reese,Alder,reese.alder22@proton.me,ID,2026-02-28, Silver,N
+23,Finley,Thorne,finley.thorne23@yahoo.com,MN,2024-09-27,silver,N
+24,Finley,Ramsey,finley.ramsey24@outlook.com,wa,2024-04-30,Bronze,N
+25,Marcus,Lindqvist,marcus.lindqvist25@yahoo.com,ID,2023-10-14,Bronze,
+26,Parker,Ellison,parker.ellison26@yahoo.com,mn,2024-09-10,Platinum,
+27,Tomas,Yates,tomas.yates27@outlook.com,MN,2024-01-20,Bronze,N
+28,Marcus,Petrov,marcus.petrov28@outlook.com,MN,2026-04-05,Bronze,N
+29,Lena,Ueda,lena.ueda29@icloud.com,CO,2024-10-19,Silver,N
+30,Jordan,Quintero,jordan.quintero30@gmail.com,ID,2025-10-20,SILVER,N
+31,Parker,Lindqvist,  parker.lindqvist31@proton.me ,NM,2025-06-17,Bronze,N
+32,Rowan,Petrov,rowan.petrov32@yahoo.com,nm,2023-12-11,Bronze,N
+33,Skyler,Kaur,  skyler.kaur33@gmail.com ,MT,2024-11-22,Bronze,N
+34,Reese,Xu,reese.xu34@gmail.com,AZ,2024-12-28,Silver,N
+35,Marcus,Alder,marcus.alder35@proton.me,NY,2024-12-06,Bronze,N
+36,Kofi,Lindqvist,kofi.lindqvist36@icloud.com,CA,2024-05-01,Gold,
+37,Riley,Ueda,riley.ueda37@outlook.com,MT,2023-01-06,Bronze,n
+38,Kofi,Alder,kofi.alder38@icloud.com,OR,2023-08-14,Bronze,N
+39,Riley,Ueda,riley.ueda39@icloud.com,TX,2024-09-14,Silver,N
+40,Morgan,Fischer,morgan.fischer40@gmail.com,UT,2023-02-25, Gold,N
+41,Reese,Thorne,reese.thorne41@outlook.com,WY,2024-01-20,Bronze,
+42,Sage,Castillo,sage.castillo42@gmail.com,TX,2023-11-24,SILVER,n
+43,Cameron,Garza,cameron.garza43@outlook.com,VT,2024-01-18,Bronze,
+44,Sage,Xu,SAGE.XU44@PROTON.ME,CO,2024-01-21,Gold,n
+45,Harper,Holt,HARPER.HOLT45@PROTON.ME,WA,2023-09-08,gold,N
+46,Riley,Dunn,RILEY.DUNN46@GMAIL.COM,AZ,2023-07-14,Bronze,N
+47,Priya,Brooks,priya.brooks47@icloud.com,VT,2024-06-18,,
+48,Reese,Sato,reese.sato48@proton.me,NM,2025-03-13,bronze,N
+49,Casey,Iverson,casey.iverson49@icloud.com,UT,2024-09-27,Silver,N
+50,Harper,Kaur,harper.kaur50@gmail.com,CO,2025-03-09,Silver,N
+51,Harper,Ueda,harper.ueda51@yahoo.com,WY,2024-04-08,Platinum,N
+52,Riley,Thorne,riley.thorne52@gmail.com,CO,2025-03-12,Bronze,N
+53,Jordan,Garza,  jordan.garza53@yahoo.com ,MT,2024-10-04,Gold,N
+54,Emerson,Petrov,qa.user54@summitoutfitters-test.com,CO,2024-05-27,Gold,Y 
+55,Tomas,Fischer,tomas.fischer55@outlook.com,CA,2024-08-25,Bronze,N
+56,Harper,Dunn,harper.dunn56@gmail.com,az,2025-03-23,Bronze,
+57,Dakota,Ramsey,dakota.ramsey57@outlook.com,ca,2023-09-25,Silver,N
+58,Mei,Nakamura,  mei.nakamura58@gmail.com ,MN,2025-02-06,Bronze,N
+59,Taylor,Fischer,taylor.fischer59@proton.me,CO,2023-11-29,,N
+60,Elena,Ellison,elena.ellison60@proton.me,AZ,2024-09-17,Silver,N
+61,Rowan,Kaur,ROWAN.KAUR61@ICLOUD.COM,CO,2024-04-29,Bronze,
+62,Rowan,Garza,rowan.garza62@proton.me,in,2023-10-12,BRONZE,N
+63,Logan,Vance,logan.vance63@yahoo.com,TX,2024-04-29, Bronze,N
+64,Kofi,Yates,kofi.yates64@yahoo.com,MT,2024-11-25,Gold,N
+65,Emerson,Ramsey,emerson.ramsey65@icloud.com,WA,2024-01-14,Silver,
+66,Logan,Kaur,logan.kaur66@gmail.com,CA,2023-10-24,Bronze,N
+67,Omar,Alder,omar.alder67@proton.me,NM,2026-02-06,Bronze,N
+68,Casey,Jensen,  casey.jensen68@yahoo.com ,ID,2023-09-19,Bronze,N
+69,Blake,Sato,BLAKE.SATO69@ICLOUD.COM,ca,2025-04-17,Silver,
+70,Parker,Holt,parker.holt70@yahoo.com,UT,2022-11-23,Silver,N
+71,Avery,Alder,avery.alder71@outlook.com,AZ,2025-04-18,SILVER,N
+72,Emerson,Ellison,emerson.ellison72@yahoo.com,wy,2023-03-18,Bronze,N
+73,Hayden,Brooks,HAYDEN.BROOKS73@YAHOO.COM,VT,2025-09-09, Gold,n
+74,Cameron,Thorne,cameron.thorne74@gmail.com,MN,2025-01-14,Silver,N
+75,Skyler,Xu,skyler.xu75@proton.me,NY,2023-12-30,Silver,N
+76,Jordan,Mendez,jordan.mendez76@icloud.com,TX,2024-12-02,Bronze,N
+77,Reese,Vance,  reese.vance77@icloud.com ,IN,2024-04-13,Bronze,N
+78,Riley,Thorne,  riley.thorne78@gmail.com ,CO,2023-06-20,Silver,N
+79,Skyler,Garza,skyler.garza79@icloud.com,CA,2025-02-24,Silver,N
+80,Omar,Lindqvist,omar.lindqvist80@gmail.com,VT,2025-02-14,Bronze,N
+81,Diego,Brooks,diego.brooks81@yahoo.com,IN,2024-03-19,SILVER,N
+82,Ingrid,Holt,ingrid.holt82@yahoo.com,AZ,2024-08-25,SILVER,N
+83,Tomas,Brooks,tomas.brooks83@outlook.com,MT,2023-05-20,Bronze,N
+84,Cameron,Zielinski,cameron.zielinski84@icloud.com,VT,2024-04-16,Silver,N
+85,Morgan,Lindqvist,MORGAN.LINDQVIST85@OUTLOOK.COM,WA,2024-10-07,Silver,N
+86,Harper,Dunn,qa.user86@summitoutfitters-test.com,mt,2023-10-05,Silver,Y
+87,Blake,Iverson,  blake.iverson87@icloud.com ,ut,2025-08-22,Bronze,N
+88,Cameron,Petrov,cameron.petrov88@proton.me,IN,2023-09-15,Gold,N
+89,Kofi,Lindqvist,kofi.lindqvist89@yahoo.com,OR,2024-04-23,Platinum,
+90,Parker,Sato,parker.sato90@proton.me,MN,2025-03-10,Bronze,N
+91,Cameron,Ueda,cameron.ueda91@icloud.com,ca,2023-06-25,Bronze,N
+92,Elena,Quintero,elena.quintero92@gmail.com,tx,2023-07-17,Bronze,N
+93,Jordan,Lindqvist,jordan.lindqvist93@icloud.com,NM,2024-03-17, Silver,
+94,Lena,Ueda,LENA.UEDA94@OUTLOOK.COM,CO,2025-05-13,Gold,N
+95,Reese,Fischer,reese.fischer95@yahoo.com,AZ,2024-11-24,Platinum,N
+96,Jordan,Iverson,jordan.iverson96@yahoo.com,wy,2024-09-13,Bronze,N
+97,Diego,Okafor,diego.okafor97@gmail.com,IN,2025-10-13,Bronze,N
+98,Jordan,Thorne,JORDAN.THORNE98@ICLOUD.COM,UT,2025-10-10,Platinum,N
+99,Cameron,Okafor,cameron.okafor99@gmail.com,NM,2023-06-05,silver,N
+100,Mei,Dunn,MEI.DUNN100@OUTLOOK.COM,MT,2025-02-13,,N
+101,Parker,Ramsey,parker.ramsey101@icloud.com,TX,2024-04-22,Silver,N
+102,Mei,Ellison,mei.ellison102@yahoo.com,wy,2024-04-07,platinum,N
+103,Kofi,Lindqvist,  kofi.lindqvist103@icloud.com ,WA,2025-04-23,,N
+104,Sage,Brooks,qa.user104@summitoutfitters-test.com,MN,2023-10-15,Gold,Y 
+105,Blake,Mendez,blake.mendez105@proton.me,vt,2024-02-05,BRONZE,
+106,Emerson,Okafor,emerson.okafor106@outlook.com,MN,2023-12-08,Bronze,N
+107,Reese,Whitaker,  reese.whitaker107@yahoo.com ,UT,2025-10-01,,
+108,Taylor,Mendez,TAYLOR.MENDEZ108@GMAIL.COM,wa,2024-06-09,Bronze,
+109,Priya,Kaur,priya.kaur109@icloud.com,MN,2025-04-15,silver,
+110,Tomas,Lindqvist,tomas.lindqvist110@outlook.com,MN,2025-10-23,Bronze,N
+111,Casey,Whitaker,casey.whitaker111@outlook.com,CO,2024-02-11,,N
+112,Parker,Ellison,  parker.ellison112@yahoo.com ,OR,2025-05-08,Silver,
+113,Jordan,Fischer,jordan.fischer113@yahoo.com,mn,2024-06-22,,n
+114,Skyler,Zielinski,skyler.zielinski114@gmail.com,or,2023-12-18,SILVER,N
+115,Finley,Garza,qa.user115@summitoutfitters-test.com,VT,2025-05-07,GOLD,Y
+116,Blake,Ueda,blake.ueda116@icloud.com,vt,2025-10-30,Gold,N
+117,Logan,Brooks,logan.brooks117@proton.me,co,2023-07-11,,N
+118,Riley,Brooks,RILEY.BROOKS118@PROTON.ME,az,2024-03-01,Silver,N
+119,Priya,Iverson,  priya.iverson119@proton.me ,IN,2022-10-14,Silver,N
+120,Omar,Lindqvist,omar.lindqvist120@outlook.com,CO,2025-03-04,BRONZE,n
+121,Marcus,Petrov,marcus.petrov121@outlook.com,WA,2024-10-10,,N
+122,Reese,Ellison,reese.ellison122@outlook.com,AZ,2023-04-19,Bronze,N
+123,Sage,Thorne,sage.thorne123@gmail.com,IN,2024-08-08,Bronze,
+124,Mei,Garza,mei.garza124@yahoo.com,CA,2023-09-17,Bronze,N
+125,Riley,Zielinski,riley.zielinski125@outlook.com,WA,2023-11-10,Silver,N
+126,Marcus,Iverson,marcus.iverson126@proton.me,MN,2025-03-25,Bronze,N
+127,Kofi,Castillo,kofi.castillo127@icloud.com,WA,2024-11-07, Silver,N
+128,Harper,Thorne,harper.thorne128@outlook.com,vt,2025-01-18,Gold,N
+129,Finley,Nakamura,finley.nakamura129@yahoo.com,TX,2025-01-29,Gold,N
+130,Avery,Alder,  avery.alder130@icloud.com ,or,2024-06-29,Silver,N
+131,Omar,Fischer,omar.fischer131@outlook.com,nm,2024-04-18,Silver,
+132,Skyler,Xu,skyler.xu132@gmail.com,MT,2023-06-23,Bronze,N
+133,Omar,Sato,omar.sato133@gmail.com,CO,2023-03-15,Silver,N
+134,Mei,Sato,mei.sato134@outlook.com,ny,2025-04-26,Silver,N
+135,Finley,Kaur,finley.kaur135@yahoo.com,ID,2023-04-24, Bronze,N
+136,Skyler,Nakamura,skyler.nakamura136@gmail.com,TX,2023-10-18,gold,
+137,Harper,Okafor,harper.okafor137@outlook.com,VT,2024-10-17,Silver,N
+138,Jordan,Ueda,jordan.ueda138@gmail.com,OR,2023-03-16,Bronze,N
+139,Skyler,Yates,skyler.yates139@icloud.com,WA,2024-10-21,Bronze,N
+140,Finley,Dunn,FINLEY.DUNN140@ICLOUD.COM,in,2022-10-03,Bronze,N
+141,Finley,Mendez,finley.mendez141@outlook.com,CA,2024-02-25,,N
+142,Dakota,Petrov,dakota.petrov142@icloud.com,OR,2023-04-17,Gold,N
+143,Sage,Lindqvist,sage.lindqvist143@outlook.com,WY,2023-11-04,SILVER,
+144,Blake,Petrov,blake.petrov144@gmail.com,mt,2023-01-31,Silver,N
+145,Logan,Zielinski,logan.zielinski145@yahoo.com,wa,2023-08-06, Gold,N
+146,Ingrid,Brooks,ingrid.brooks146@gmail.com,TX,2023-10-13,Platinum,N
+147,Marcus,Zielinski,marcus.zielinski147@yahoo.com,NM,2025-01-06,,N
+148,Reese,Ueda,reese.ueda148@gmail.com,CO,2023-12-14,Bronze,N
+149,Parker,Jensen,parker.jensen149@gmail.com,WA,2023-07-19,SILVER,N
+150,Logan,Mendez,logan.mendez150@proton.me,MT,2023-10-03,Bronze,
+151,Kofi,Ramsey,kofi.ramsey151@proton.me,WY,2023-03-29,,N
+152,Jordan,Kaur,jordan.kaur152@outlook.com,CA,2024-02-12,Silver,N
+153,Skyler,Iverson,skyler.iverson153@proton.me,az,2023-12-21, Bronze,N
+154,Harper,Iverson,harper.iverson154@icloud.com,CA,2024-02-26,Silver,N
+155,Avery,Dunn,AVERY.DUNN155@OUTLOOK.COM,wa,2023-05-20,Bronze,N
+156,Finley,Ellison,finley.ellison156@yahoo.com,NY,2023-05-09,,n
+157,Reese,Mendez,REESE.MENDEZ157@ICLOUD.COM,UT,2024-06-27, Bronze,N
+158,Dakota,Fischer,dakota.fischer158@icloud.com,mt,2025-07-30,GOLD,N
+159,Riley,Quintero,riley.quintero159@outlook.com,mn,2023-01-29,Bronze,N
+160,Casey,Xu,casey.xu160@yahoo.com,ut,2023-02-06,,N
+161,Lena,Xu,lena.xu161@gmail.com,IN,2023-10-05,Silver,
+162,Elena,Yates,elena.yates162@yahoo.com,mt,2024-02-03,bronze,N
+163,Morgan,Iverson,  morgan.iverson163@outlook.com ,IN,2024-09-20,Gold,N
+164,Cameron,Brooks,cameron.brooks164@outlook.com,TX,2024-01-31,Platinum,
+165,Tomas,Zielinski,tomas.zielinski165@outlook.com,TX,2025-08-01, Silver,N
+166,Cameron,Ueda,cameron.ueda166@gmail.com,NY,2023-09-18,Bronze,N
+167,Hayden,Fischer,hayden.fischer167@proton.me,AZ,2024-07-05, Gold,N
+168,Kofi,Nakamura,  kofi.nakamura168@icloud.com ,NM,2025-05-09,Silver,
+169,Ingrid,Lindqvist,INGRID.LINDQVIST169@PROTON.ME,MT,2025-09-27,Silver,N
+170,Reese,Zielinski,REESE.ZIELINSKI170@PROTON.ME,MT,2023-11-17,Silver,N
+171,Rowan,Petrov,rowan.petrov171@yahoo.com,WY,2026-01-28,Bronze,N
+172,Cameron,Alder,cameron.alder172@outlook.com,UT,2023-07-06,,
+173,Hayden,Garza,hayden.garza173@icloud.com,OR,2025-05-01,Bronze,N
+174,Tomas,Dunn,tomas.dunn174@yahoo.com,MT,2024-10-13,silver,N
+175,Skyler,Whitaker,SKYLER.WHITAKER175@ICLOUD.COM,in,2025-05-14, Bronze,
+176,Reese,Lindqvist,  reese.lindqvist176@proton.me ,OR,2024-08-17,Bronze,N
+177,Quinn,Brooks,quinn.brooks177@gmail.com,UT,2024-02-11,Bronze,N
+178,Kofi,Ramsey,  kofi.ramsey178@gmail.com ,UT,2024-10-17,BRONZE,N
+179,Taylor,Quintero,taylor.quintero179@proton.me,MN,2024-07-12, Gold,N
+180,Morgan,Fischer,morgan.fischer180@icloud.com,in,2024-05-28,Gold,N
+181,Morgan,Fischer,morgan.fischer181@icloud.com,AZ,2024-03-25,,N
+182,Logan,Quintero,logan.quintero182@icloud.com,MN,2024-10-06,Gold,N
+183,Lena,Dunn,lena.dunn183@proton.me,CA,2023-08-09,Silver,N
+184,Priya,Zielinski,priya.zielinski184@icloud.com,TX,2024-12-28,Silver,N
+185,Ingrid,Ueda,ingrid.ueda185@icloud.com,MN,2024-03-12,Bronze,N
+186,Parker,Alder,parker.alder186@yahoo.com,NM,2024-11-09,,N
+187,Harper,Brooks,qa.user187@summitoutfitters-test.com,TX,2024-09-20,Gold,y
+188,Parker,Ellison,parker.ellison188@proton.me,TX,2023-09-19,bronze,N
+189,Taylor,Sato,taylor.sato189@outlook.com,MT,2024-08-17, Silver,N
+190,Elena,Ueda,elena.ueda190@yahoo.com,OR,2024-07-30,SILVER,N
+191,Sage,Sato,  sage.sato191@gmail.com ,VT,2024-06-03,Gold,N
+192,Quinn,Brooks,quinn.brooks192@gmail.com,IN,2024-05-05,Silver,N
+193,Casey,Ramsey,casey.ramsey193@proton.me,VT,2024-10-04,,
+194,Morgan,Dunn,MORGAN.DUNN194@OUTLOOK.COM,ca,2024-06-08,Gold,N
+195,Avery,Ellison,AVERY.ELLISON195@YAHOO.COM,WA,2025-08-20,Bronze,N
+196,Skyler,Kaur,skyler.kaur196@yahoo.com,CA,2023-12-30, Gold,N
+197,Morgan,Ueda,morgan.ueda197@outlook.com,AZ,2024-05-02,platinum,N
+198,Kofi,Nakamura,kofi.nakamura198@proton.me,OR,2025-03-21,Bronze,N
+199,Avery,Zielinski,  avery.zielinski199@yahoo.com ,WY,2024-06-03, Gold,N
+200,Morgan,Kaur,MORGAN.KAUR200@YAHOO.COM,IN,2024-08-16,Silver,
+201,Quinn,Lindqvist,  quinn.lindqvist201@gmail.com ,WY,2024-10-03,Silver,N
+202,Parker,Yates,parker.yates202@yahoo.com,CA,2024-03-04,Bronze,N
+203,Omar,Ellison,omar.ellison203@icloud.com,IN,2024-10-22,Bronze,N
+204,Riley,Xu,riley.xu204@yahoo.com,NY,2024-08-06, Gold,N
+205,Cameron,Jensen,cameron.jensen205@proton.me,wy,2025-12-05,Gold,n
+206,Harper,Kaur,qa.user206@summitoutfitters-test.com,WA,2023-07-08,Gold,Y
+207,Skyler,Okafor,SKYLER.OKAFOR207@PROTON.ME,VT,2024-11-29,Silver,N
+208,Blake,Nakamura,  blake.nakamura208@proton.me ,WY,2024-09-17,Silver,N
+209,Jordan,Iverson,jordan.iverson209@yahoo.com,wa,2024-10-31,Platinum,n
+210,Cameron,Okafor,cameron.okafor210@outlook.com,NY,2024-11-01,Silver,N
+211,Reese,Jensen,reese.jensen211@proton.me,AZ,2024-09-13,Gold,n
+212,Riley,Nakamura,RILEY.NAKAMURA212@ICLOUD.COM,ID,2022-10-18,Bronze,N
+213,Morgan,Iverson,morgan.iverson213@yahoo.com,ID,2023-07-09,Bronze,N
+214,Avery,Zielinski,avery.zielinski214@proton.me,UT,2025-04-03,Bronze,
+215,Priya,Yates,priya.yates215@outlook.com,WA,2023-08-21, Bronze,N
+216,Dakota,Whitaker,dakota.whitaker216@yahoo.com,WY,2024-09-29,Bronze,N
+217,Skyler,Okafor,skyler.okafor217@outlook.com,vt,2024-04-19,Gold,N
+218,Jordan,Quintero,  jordan.quintero218@yahoo.com ,TX,2024-08-28,Bronze,N
+219,Quinn,Holt,quinn.holt219@proton.me,OR,2025-03-09,Bronze,
+220,Avery,Iverson,avery.iverson220@outlook.com,NY,2023-12-31,Silver,N
