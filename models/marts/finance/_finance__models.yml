@@ -1,0 +1,42 @@
+models:
+  - name: fct_payment_reconciliation
+    description: >
+      Order-level payment reconciliation in order currency. Includes test accounts; excludes cancelled
+      orders (their payments surface as UNMATCHED_PAYMENT, preserved legacy behavior).
+      Migrated from Alteryx workflow Payment_Reconciliation.yxmd (target ANALYTICS.LEGACY.PAYMENT_RECONCILIATION).
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_payment_reconciliation')
+    columns:
+      - name: order_id
+        description: Primary key (order id, or payment order id for unmatched payments).
+        data_tests: [unique, not_null]
+      - name: customer_id
+        description: Customer (null for unmatched payments).
+      - name: order_date
+        description: Order date.
+      - name: order_status
+        description: Upper-cased order status.
+      - name: currency_code
+        description: Order currency.
+      - name: expected_amount
+        description: Line net + shipping, order currency.
+      - name: captured_amount
+        description: Sum of CAPTURED payment amounts.
+      - name: variance_amount
+        description: captured_amount - expected_amount (captured_amount for unmatched payments).
+      - name: captured_payment_count
+        description: Number of CAPTURED payments.
+      - name: failed_payment_count
+        description: Number of FAILED payments.
+      - name: last_captured_date
+        description: Latest CAPTURED payment date.
+      - name: days_to_payment
+        description: Days from order date to last captured payment.
+      - name: reconciliation_status
+        description: MATCHED (within 1 cent), UNDERPAID, OVERPAID, NO_PAYMENT, UNMATCHED_PAYMENT.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['MATCHED', 'UNDERPAID', 'OVERPAID', 'NO_PAYMENT', 'UNMATCHED_PAYMENT']
