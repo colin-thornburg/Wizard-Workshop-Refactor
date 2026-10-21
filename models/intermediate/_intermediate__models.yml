@@ -12,9 +12,10 @@ models:
 
   - name: int_order_lines__usd
     description: >
-      Shared order-line money model for migrated marts. Preserves the Informatica lookup behavior:
-      missing FX defaults to 1, deleted products use category UNKNOWN and zero unit cost, and gross,
-      discount, and net amounts are rounded to USD independently at line grain before aggregation.
+      Shared order-line money model for migrated marts. Carries unfiltered order-currency and USD
+      amounts plus valid-order, test-customer, and known-product flags so each mart can apply its own
+      legacy scope. Missing FX defaults to 1, deleted products use category UNKNOWN and zero unit cost,
+      and gross, discount, and net amounts are rounded to USD independently at line grain.
     columns:
       - name: order_line_id
         data_tests:

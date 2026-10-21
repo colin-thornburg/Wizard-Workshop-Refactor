@@ -40,10 +40,12 @@ joined as (
         order_lines.order_id,
         orders.customer_id,
         order_lines.product_id,
+        products.product_id as matched_product_id,
         orders.order_date,
         orders.order_status,
         orders.channel,
         orders.currency_code,
+        orders.shipping_cost,
         order_lines.quantity,
         order_lines.unit_price,
         order_lines.discount_pct,
@@ -74,7 +76,9 @@ normalized as (
         joined.product_id,
         joined.order_date,
         joined.order_status,
+        joined.channel,
         joined.currency_code,
+        joined.shipping_cost,
         joined.quantity,
         joined.unit_price,
         joined.discount_pct,
@@ -91,8 +95,11 @@ normalized as (
             when upper(trim(joined.is_test_account)) = 'Y' then 1
             else 0
         end as is_test,
-        joined.quantity * joined.unit_price as line_gross_local,
-        round(joined.quantity * joined.unit_price * joined.discount_pct, 2) as line_discount_local
+        joined.order_status <> 'CANCELLED' as is_valid_order,
+        coalesce(upper(trim(joined.is_test_account)), 'N') = 'Y' as is_test_customer,
+        joined.matched_product_id is not null as has_known_product,
+        joined.quantity * joined.unit_price as line_gross_amount,
+        round(joined.quantity * joined.unit_price * joined.discount_pct, 2) as line_discount_amount
 
     from joined
 
@@ -107,7 +114,9 @@ calculated as (
         normalized.product_id,
         normalized.order_date,
         normalized.order_status,
+        normalized.channel,
         normalized.currency_code,
+        normalized.shipping_cost,
         normalized.quantity,
         normalized.unit_price,
         normalized.discount_pct,
@@ -116,9 +125,12 @@ calculated as (
         normalized.channel_group,
         normalized.product_category,
         normalized.is_test,
-        normalized.line_gross_local,
-        normalized.line_discount_local,
-        normalized.line_gross_local - normalized.line_discount_local as line_net_local
+        normalized.is_valid_order,
+        normalized.is_test_customer,
+        normalized.has_known_product,
+        normalized.line_gross_amount,
+        normalized.line_discount_amount,
+        normalized.line_gross_amount - normalized.line_discount_amount as line_net_amount
 
     from normalized
 
@@ -141,10 +153,18 @@ final as (
         calculated.product_category,
         calculated.is_test,
         calculated.usd_rate,
-        round(calculated.line_gross_local * calculated.usd_rate, 2) as line_gross_usd,
-        round(calculated.line_discount_local * calculated.usd_rate, 2) as line_discount_usd,
-        round(calculated.line_net_local * calculated.usd_rate, 2) as line_net_usd,
-        calculated.quantity * coalesce(calculated.unit_cost, 0) as line_cogs_usd
+        round(calculated.line_gross_amount * calculated.usd_rate, 2) as line_gross_usd,
+        round(calculated.line_discount_amount * calculated.usd_rate, 2) as line_discount_usd,
+        round(calculated.line_net_amount * calculated.usd_rate, 2) as line_net_usd,
+        calculated.quantity * coalesce(calculated.unit_cost, 0) as line_cogs_usd,
+        calculated.channel,
+        calculated.shipping_cost,
+        calculated.line_gross_amount,
+        calculated.line_discount_amount,
+        calculated.line_net_amount,
+        calculated.is_valid_order,
+        calculated.is_test_customer,
+        calculated.has_known_product
 
     from calculated
 

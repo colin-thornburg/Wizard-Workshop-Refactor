@@ -1,0 +1,49 @@
+models:
+  - name: fct_payment_reconciliation
+    description: >
+      Order-level payment reconciliation migrated from Alteryx. Preserves legacy behavior: cancelled
+      orders are excluded before reconciliation, orders without lines are dropped, test customers and
+      all line quantities/products remain in scope, only CAPTURED payments contribute money, FAILED
+      payments are counted, REFUNDED payments are ignored, and amounts remain in order currency with
+      a one-cent matching tolerance. Payments for cancelled or otherwise absent orders intentionally
+      appear as UNMATCHED_PAYMENT.
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_payment_reconciliation')
+            exclude_columns: ['etl_load_ts']
+    columns:
+      - name: order_id
+        description: Order identifier from either an eligible order or an unmatched payment.
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Customer identifier; null for unmatched payments.
+      - name: order_date
+        description: Source order date; null for unmatched payments.
+      - name: order_status
+        description: Normalized source order status; null for unmatched payments.
+      - name: currency_code
+        description: Order currency; null for unmatched payments.
+      - name: expected_amount
+        description: Sum of line net amounts plus shipping, rounded to two decimals in order currency; null for unmatched payments.
+      - name: captured_amount
+        description: Sum of CAPTURED payment amounts in order currency; zero when an eligible order has no captured payment.
+      - name: variance_amount
+        description: Captured amount less expected amount, rounded to two decimals; equals captured amount for unmatched payments.
+      - name: captured_payment_count
+        description: Count of CAPTURED payment attempts for the order.
+      - name: failed_payment_count
+        description: Count of FAILED payment attempts for the order.
+      - name: last_captured_date
+        description: Latest payment date among CAPTURED attempts; null when none exists.
+      - name: days_to_payment
+        description: Days from order date to the latest captured payment date; null when either date is absent.
+      - name: reconciliation_status
+        description: Legacy reconciliation category using a one-cent absolute variance tolerance.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['MATCHED', 'NO_PAYMENT', 'OVERPAID', 'UNDERPAID', 'UNMATCHED_PAYMENT']
