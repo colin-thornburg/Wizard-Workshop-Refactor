@@ -23,10 +23,15 @@ Read the whole artifact. Use the tool guide in `references/` (`stored-procedures
 
 ## 2. Plan the DAG
 
+- List `models/staging/shop/` and `models/intermediate/` first. A missing folder just means nothing exists yet.
 - Map each source to `stg_shop__<table>`. **Reuse existing staging models.** Create only the missing ones.
-- Look in `models/intermediate/` for logic you can reuse. Reuse only if filters, joins and defaults match
-  exactly. Otherwise filter in the mart, or create a new intermediate model.
+- Order-line money and FX come from `int_order_lines__usd`; refunds come from `int_returns__usd`
+  (AGENTS.md rule 6). Create them if they don't exist. Add a column if one is missing. Never rebuild that
+  logic inside a mart.
+- Apply this workflow's own filters (statuses, test accounts, quantities, unknown products) **in the mart**,
+  using the flags on the shared models. Compare them against the legacy code, not against the other marts.
 - Put the mart where AGENTS.md says, with the name AGENTS.md gives.
+- Before writing SQL, state the plan in 3–5 lines: models reused, models created or extended, and filters applied in the mart.
 
 ## 3. Build
 
@@ -43,7 +48,9 @@ Read the whole artifact. Use the tool guide in `references/` (`stored-procedures
 ## 5. Validate
 
 ```bash
-dbt build --select +<mart>
+dbt build --select +<mart>+                 # the mart, its parents and their tests
+dbt build --select <shared model>+          # only if you changed a shared model: re-prove every mart
+dbt run-operation parity_report             # include the scoreboard in your summary
 ```
 
 If `legacy_parity` fails:
