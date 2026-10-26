@@ -1,0 +1,47 @@
+models:
+  - name: dim_customer_ltv
+    description: >
+      One row per non-test customer with lifetime product revenue, refunds, recency, and CRM segment as of var('as_of_date').
+      Preserves legacy behavior: missing FX rates default to 1, refunds use the order-month rate with no return-date cutoff,
+      average order value excludes refunds, and Platinum members with an order override AT_RISK as VIP.
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_customer_ltv')
+    columns:
+      - name: customer_id
+        description: Unique identifier for the eligible customer.
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_name
+        description: Trimmed first and last name joined with a single space.
+      - name: email
+        description: Lowercased and trimmed customer email address.
+      - name: state
+        description: Uppercased and trimmed customer state code.
+      - name: loyalty_tier
+        description: Uppercased loyalty tier, defaulting missing or blank values to NONE.
+      - name: first_order_date
+        description: Earliest qualifying order date on or before the configured as-of date.
+      - name: last_order_date
+        description: Latest qualifying order date on or before the configured as-of date.
+      - name: total_orders
+        description: Count of distinct completed, shipped, or returned orders through the configured as-of date.
+      - name: product_revenue_usd
+        description: Sum of per-line rounded USD product revenue after line discounts and before refunds.
+      - name: refunds_usd
+        description: Sum of per-return rounded refunds converted at the associated order-month rate.
+      - name: net_revenue_usd
+        description: Product revenue in USD less refunds in USD.
+      - name: avg_order_value_usd
+        description: Product revenue before refunds divided by qualifying orders and rounded to two decimals; zero for prospects.
+      - name: days_since_last_order
+        description: Days from the last qualifying order to the configured as-of date; null for prospects.
+      - name: customer_segment
+        description: CRM segment with precedence VIP, AT_RISK, PROSPECT, HIGH_VALUE, MID_VALUE, then LOW_VALUE.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['VIP', 'AT_RISK', 'PROSPECT', 'HIGH_VALUE', 'MID_VALUE', 'LOW_VALUE']

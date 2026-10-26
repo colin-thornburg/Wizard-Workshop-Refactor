@@ -1,0 +1,81 @@
+models:
+  - name: stg_shop__customers
+    description: Cleaned customer master with normalized contact, loyalty, and test-account fields.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__orders
+    description: Cleaned order headers with normalized status, channel, and currency codes.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+      - name: order_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['COMPLETED', 'SHIPPED', 'RETURNED', 'CANCELLED', 'PENDING']
+      - name: currency_code
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['USD', 'CAD', 'EUR']
+
+  - name: stg_shop__order_lines
+    description: Cleaned order line items at the source grain.
+    columns:
+      - name: order_line_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__products
+    description: Cleaned product catalog used to identify known products.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__returns
+    description: Cleaned item returns with normalized reason codes.
+    columns:
+      - name: return_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__fx_rates
+    description: Cleaned monthly foreign-exchange rates to USD; USD intentionally has no rows.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['currency_code', 'rate_month']
+    columns:
+      - name: currency_code
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['CAD', 'EUR']
+      - name: rate_month
+        data_tests:
+          - not_null
+
+
+  - name: stg_shop__payments
+    description: Cleaned payment events with normalized method and status values.
+    columns:
+      - name: payment_id
+        data_tests:
+          - unique
+          - not_null
+      - name: payment_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['CAPTURED', 'FAILED', 'REFUNDED']

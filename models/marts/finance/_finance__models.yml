@@ -1,0 +1,46 @@
+models:
+  - name: fct_payment_reconciliation
+    description: >
+      Order-level expected-versus-captured payment reconciliation migrated from Alteryx. Preserves legacy behavior:
+      only cancelled orders are excluded; test customers, pending orders, all quantities, and unknown products remain;
+      non-cancelled orders without lines are dropped; payments on cancelled, missing, or line-less orders become
+      UNMATCHED_PAYMENT; refunded payments are ignored; and all amounts remain in the order currency with no FX.
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_payment_reconciliation')
+    columns:
+      - name: order_id
+        description: Order identifier from either an eligible order or payment activity.
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Customer identifier from the eligible order; null for unmatched payments.
+      - name: order_date
+        description: Order date; null for unmatched payments.
+      - name: order_status
+        description: Normalized order status; null for unmatched payments.
+      - name: currency_code
+        description: Normalized order currency; null for unmatched payments.
+      - name: expected_amount
+        description: Rounded local-currency line net total plus shipping; null for unmatched payments.
+      - name: captured_amount
+        description: Sum of captured payment amounts; zero when an eligible order has no captured payments.
+      - name: variance_amount
+        description: Captured amount less expected amount, rounded to two decimals; captured amount for unmatched payments.
+      - name: captured_payment_count
+        description: Number of captured payment rows.
+      - name: failed_payment_count
+        description: Number of failed payment rows; refunded rows are ignored.
+      - name: last_captured_date
+        description: Latest captured payment date.
+      - name: days_to_payment
+        description: Days from order date to the latest captured payment; null without an order or captured payment.
+      - name: reconciliation_status
+        description: Finance reconciliation classification using a one-cent absolute matching tolerance.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['UNMATCHED_PAYMENT', 'NO_PAYMENT', 'MATCHED', 'UNDERPAID', 'OVERPAID']
