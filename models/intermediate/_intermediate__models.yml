@@ -1,0 +1,30 @@
+models:
+  - name: int_orders__customer_flags
+    description: >
+      One row per order with reusable validity, test-customer, and known-customer flags. No business
+      filters are applied so marts can reproduce workflow-specific eligibility rules.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: int_order_lines__usd
+    description: >
+      One row per order line with order-month FX, local and per-line rounded USD amounts, and reusable
+      validity flags. Missing FX defaults to 1 for legacy parity, including non-USD currencies.
+    columns:
+      - name: order_line_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: int_returns__usd
+    description: >
+      One row per return with refund USD calculated at the related order's month rate. No return-date
+      filter is applied because each consuming legacy workflow defines its own scope.
+    columns:
+      - name: return_id
+        data_tests:
+          - unique
+          - not_null

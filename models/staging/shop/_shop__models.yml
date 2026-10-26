@@ -1,0 +1,95 @@
+models:
+  - name: stg_shop__customers
+    description: Cleaned customer master with normalized contact, loyalty, and test-account fields.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+      - name: loyalty_tier
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']
+      - name: is_test_account
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+                quote: false
+
+  - name: stg_shop__orders
+    description: Cleaned order headers with normalized status, channel, and currency codes.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+      - name: order_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['CANCELLED', 'COMPLETED', 'PENDING', 'RETURNED', 'SHIPPED']
+      - name: channel
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['APP', 'MARKETPLACE', 'PHONE', 'STORE', 'WEB']
+      - name: currency_code
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['CAD', 'EUR', 'USD']
+
+  - name: stg_shop__order_lines
+    description: Order lines with source numeric types preserved for exact money calculations.
+    columns:
+      - name: order_line_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__products
+    description: Cleaned product catalog used to identify whether an order line has a known product.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__returns
+    description: Cleaned item returns with normalized reason codes and local-currency refunds.
+    columns:
+      - name: return_id
+        data_tests:
+          - unique
+          - not_null
+      - name: reason_code
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['DESC', 'DMG', 'LATE', 'MIND', 'SIZE']
+
+  - name: stg_shop__fx_rates
+    description: Monthly non-USD currency conversion rates expressed as USD per source-currency unit.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['currency_code', 'rate_month']
+    columns:
+      - name: currency_code
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['CAD', 'EUR']
+      - name: rate_month
+        data_tests:
+          - not_null
+      - name: usd_per_unit
+        data_tests:
+          - not_null
