@@ -23,7 +23,9 @@ Read the whole artifact. Use the tool guide in `references/` (`stored-procedures
 
 ## 2. Plan the DAG
 
-- List `models/staging/shop/` and `models/intermediate/` first. A missing folder just means nothing exists yet.
+- List `models/staging/shop/`, `models/intermediate/` and `models/marts/` first. Read only files that appear in
+  those listings. Never open a file path just to check whether it exists: a missing file shows up as a failed tool
+  call. An empty folder (only `.gitkeep`) just means nothing exists yet.
 - Map each source to `stg_shop__<table>`. **Reuse existing staging models.** Create only the missing ones.
 - Order-line money and FX come from `int_order_lines__usd`; refunds come from `int_returns__usd`
   (AGENTS.md rule 6). Create them if they don't exist. Add a column if one is missing. Never rebuild that

@@ -43,7 +43,7 @@ Migration targets. Use exactly these model names and folders:
 ## Non-negotiables
 
 1. **Layering:** sources → staging → intermediate → marts. Marts never read sources. Staging never joins.
-2. **One staging model per source table.** Before creating one, check `models/staging/shop/`. Reuse; never duplicate.
+2. **One staging model per source table.** Before creating one, list `models/staging/shop/` and read only the files the listing shows. Reuse; never duplicate.
 3. **Always reuse the shared models in rule 6.** They carry no filters. Reuse any *other* intermediate model
    only when the rules match exactly: same filters, join types and defaults. The four legacy workflows do not
    all filter the same way.
