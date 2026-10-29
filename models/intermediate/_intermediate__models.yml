@@ -1,0 +1,14 @@
+models:
+  - name: int_order_lines__usd
+    description: All order lines with local and per-line rounded USD amounts plus reusable quality flags; no workflow filters are applied.
+    columns:
+      - name: order_line_id
+        description: Order line identifier.
+        data_tests: [unique, not_null]
+
+  - name: int_returns__usd
+    description: All returns converted to USD using the order-month FX rate, with reusable order, customer, and product flags.
+    columns:
+      - name: return_id
+        description: Return identifier.
+        data_tests: [unique, not_null]

@@ -1,0 +1,71 @@
+models:
+  - name: dim_customer_ltv
+    description: >
+      One row per non-test customer with lifetime product revenue, refunds, recency, and CRM segment as of var('as_of_date').
+      Preserves legacy behavior: refunds use the order-month FX rate, discounts and USD amounts round per line, customers with no
+      valid orders remain prospects, AT_RISK applies only to MID_VALUE and HIGH_VALUE customers, and PLATINUM members with an order
+      become VIP after all other segmentation rules.
+    semantic_model:
+      enabled: true
+    agg_time_dimension: first_order_date
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_customer_ltv')
+    columns:
+      - name: customer_id
+        description: Customer identifier and mart primary key.
+        entity:
+          type: primary
+          name: customer
+        data_tests: [unique, not_null]
+      - name: customer_name
+        description: Trimmed first and last name joined with a single space.
+      - name: email
+        description: Lowercased and trimmed customer email.
+      - name: state
+        description: Uppercased and trimmed customer state code.
+        dimension:
+          type: categorical
+      - name: loyalty_tier
+        description: Uppercased loyalty tier, defaulting blank values to NONE.
+        dimension:
+          type: categorical
+      - name: first_order_date
+        description: Date of the customer's first valid order through the as-of date.
+        granularity: day
+        dimension:
+          type: time
+      - name: last_order_date
+        description: Date of the customer's latest valid order through the as-of date.
+        granularity: day
+        dimension:
+          type: time
+      - name: total_orders
+        description: Distinct count of valid orders through the as-of date.
+      - name: product_revenue_usd
+        description: Sum of per-line rounded net product revenue converted at the order-month FX rate.
+      - name: refunds_usd
+        description: Sum of per-return rounded refunds converted at the order-month FX rate.
+      - name: net_revenue_usd
+        description: Product revenue less refunds in USD.
+      - name: avg_order_value_usd
+        description: Product revenue divided by valid order count, rounded to two decimals; zero for prospects.
+      - name: days_since_last_order
+        description: Days from the last valid order to var('as_of_date'); null for prospects.
+      - name: customer_segment
+        description: CRM segment with precedence VIP, AT_RISK, PROSPECT, HIGH_VALUE, MID_VALUE, then LOW_VALUE.
+        dimension:
+          type: categorical
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['VIP', 'AT_RISK', 'PROSPECT', 'HIGH_VALUE', 'MID_VALUE', 'LOW_VALUE']
+    metrics:
+      - name: customer_lifetime_value
+        description: Total net product revenue after refunds across the selected customer population.
+        label: Customer Lifetime Value
+        type: simple
+        agg: sum
+        expr: net_revenue_usd
