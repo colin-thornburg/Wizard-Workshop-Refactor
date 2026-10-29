@@ -1,0 +1,28 @@
+models:
+  - name: int_orders__customer_flags
+    description: Order headers enriched with reusable valid-order, test-customer, and known-customer flags. No business filters are applied.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: int_order_lines__usd
+    description: >
+      All order lines enriched with order context, customer and product flags, and monthly FX. Local discounts
+      and USD amounts preserve per-line rounding; missing FX rates default to 1 to match legacy behavior.
+    columns:
+      - name: order_line_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: int_returns__usd
+    description: >
+      All return rows enriched from their order line. Refunds use the order-month exchange rate and are rounded
+      per return; returns without a matching line are retained with false eligibility flags.
+    columns:
+      - name: return_id
+        data_tests:
+          - unique
+          - not_null

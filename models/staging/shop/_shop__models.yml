@@ -1,0 +1,78 @@
+models:
+  - name: stg_shop__customers
+    description: Cleaned customer master at one row per customer. Test accounts are retained and represented by a boolean flag.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+      - name: loyalty_tier
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']
+      - name: is_test_account
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+  - name: stg_shop__orders
+    description: Cleaned order headers at one row per order with normalized status, channel, and currency codes.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+      - name: order_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['COMPLETED', 'SHIPPED', 'RETURNED', 'CANCELLED', 'PENDING']
+      - name: currency_code
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['USD', 'CAD', 'EUR']
+
+  - name: stg_shop__order_lines
+    description: Order-line inputs at one row per order line, retaining local-currency price and discount values.
+    columns:
+      - name: order_line_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__products
+    description: Cleaned product catalog at one row per product, used to identify order lines with a known product.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__returns
+    description: Cleaned item returns at one row per return, with normalized reason codes and local-currency refunds.
+    columns:
+      - name: return_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_shop__fx_rates
+    description: Monthly non-USD exchange rates at one row per currency and rate month. Missing rates are defaulted downstream.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['currency_code', 'rate_month']
+    columns:
+      - name: currency_code
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['CAD', 'EUR']
+      - name: rate_month
+        data_tests:
+          - not_null
