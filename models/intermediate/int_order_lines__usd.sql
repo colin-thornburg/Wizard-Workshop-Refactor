@@ -1,4 +1,5 @@
 -- Migrated from legacy/stored_procedures/sp_load_customer_ltv.sql
+-- Extended for legacy/informatica/m_LOAD_DAILY_SALES_SUMMARY.xml
 -- Grain: one row per order line
 
 with
@@ -38,6 +39,8 @@ enriched_order_lines as (
         orders.order_status,
         orders.channel,
         orders.currency_code,
+        products.category as product_category,
+        products.unit_cost as product_unit_cost,
         order_lines.quantity,
         order_lines.unit_price,
         order_lines.discount_pct,
@@ -81,6 +84,8 @@ final as (
         order_status,
         channel,
         currency_code,
+        product_category,
+        product_unit_cost,
         quantity,
         unit_price,
         discount_pct,
@@ -91,6 +96,7 @@ final as (
         round(line_gross_amount * usd_rate, 2) as line_gross_usd,
         round(line_discount_amount * usd_rate, 2) as line_discount_usd,
         round(line_net_amount * usd_rate, 2) as line_net_usd,
+        quantity * coalesce(product_unit_cost, 0) as line_cogs_usd,
         is_valid_order,
         is_test_customer,
         has_known_product

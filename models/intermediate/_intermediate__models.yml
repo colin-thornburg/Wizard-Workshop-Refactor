@@ -9,8 +9,10 @@ models:
 
   - name: int_order_lines__usd
     description: >
-      All order lines enriched with order context, customer and product flags, and monthly FX. Local discounts
-      and USD amounts preserve per-line rounding; missing FX rates default to 1 to match legacy behavior.
+      All order lines enriched with order context, customer and product flags, product category and cost, and
+      monthly FX. Local discounts and USD amounts preserve per-line rounding; missing FX rates default to 1.
+      Product unit cost is already USD, and missing product cost produces zero line COGS. No business filters
+      are applied.
     columns:
       - name: order_line_id
         data_tests:
