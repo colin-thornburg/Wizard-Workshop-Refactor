@@ -1,5 +1,6 @@
 -- Migrated from legacy/stored_procedures/sp_load_customer_ltv.sql
 -- Extended for legacy/informatica/m_LOAD_DAILY_SALES_SUMMARY.xml
+-- Extended for legacy/talend/J_Product_Returns_Analysis_0.1.item
 -- Grain: one row per order line
 
 with
@@ -39,6 +40,8 @@ enriched_order_lines as (
         orders.order_status,
         orders.channel,
         orders.currency_code,
+        products.sku as product_sku,
+        products.product_name,
         products.category as product_category,
         products.unit_cost as product_unit_cost,
         order_lines.quantity,
@@ -47,6 +50,7 @@ enriched_order_lines as (
         coalesce(fx_rates.usd_per_unit, 1) as usd_rate,
         coalesce(orders.is_valid_order, false) as is_valid_order,
         coalesce(orders.is_test_customer, false) as is_test_customer,
+        coalesce(orders.has_known_customer, false) as has_known_customer,
         products.product_id is not null as has_known_product
 
     from order_lines
@@ -84,6 +88,8 @@ final as (
         order_status,
         channel,
         currency_code,
+        product_sku,
+        product_name,
         product_category,
         product_unit_cost,
         quantity,
@@ -99,6 +105,7 @@ final as (
         quantity * coalesce(product_unit_cost, 0) as line_cogs_usd,
         is_valid_order,
         is_test_customer,
+        has_known_customer,
         has_known_product
 
     from line_amounts_local

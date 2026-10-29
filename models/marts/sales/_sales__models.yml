@@ -47,3 +47,47 @@ models:
         description: Net sales in USD less COGS in USD.
       - name: gross_margin_pct
         description: Gross margin divided by net sales, rounded to four decimals; zero when net sales is zero.
+
+  - name: fct_product_returns
+    description: >
+      Product-level sales and returns summary migrated from Talend. Includes products with valid non-test sales
+      lines, drops deleted products, caps returned units at sold units per order line, leaves refund dollars
+      uncapped, and ranks top reasons using raw returned units with an alphabetical reason-code tie-break.
+    data_tests:
+      - legacy_parity:
+          arguments:
+            legacy_relation: ref('legacy_product_returns_summary')
+    columns:
+      - name: product_id
+        description: Unique identifier for the known product.
+        data_tests:
+          - unique
+          - not_null
+      - name: sku
+        description: Product stock-keeping unit from the product lookup.
+      - name: product_name
+        description: Product name from the product lookup.
+      - name: category
+        description: Product category from the product lookup.
+      - name: units_sold
+        description: Total units across valid non-test order lines; zero and negative quantities are retained.
+      - name: units_returned
+        description: Returned units capped at the sold quantity separately for each order line, then summed.
+      - name: return_rate
+        description: Capped returned units divided by units sold, rounded to four decimals; zero when units sold is not positive.
+      - name: refund_amount_usd
+        description: Sum of uncapped per-return refunds converted at the order-month FX rate and rounded to two decimals.
+      - name: top_return_reason
+        description: Human-readable reason with the most raw returned units; alphabetical reason code breaks ties, and no returns becomes NONE.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NONE', 'Damaged', 'Wrong Size', 'Not As Described', 'Changed Mind', 'Other']
+      - name: return_flag
+        description: HIGH for at least 10 units sold and return rate at least 15%; WATCH for at least 8%; otherwise NORMAL.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['HIGH', 'WATCH', 'NORMAL']
